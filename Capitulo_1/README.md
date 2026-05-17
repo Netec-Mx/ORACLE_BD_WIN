@@ -72,233 +72,583 @@ Al completar esta práctica, serás capaz de:
 
 ### Configuración Inicial
 
-# 🧪 Lab 01-00-01 (Windows)
+------------------------------------------------------------------------
 
-## Exploración de la Arquitectura Fundamental de Oracle Database 19c
 
----
 
-## 📌 Metadatos
+**🧪 Lab 01-00-01 (Windows)**
 
-| Propiedad          | Valor                                      |
-| ------------------ | ------------------------------------------ |
-| Duración           | 45 minutos                                 |
-| Complejidad        | Principiante                               |
-| Nivel Bloom        | Aplicar                                    |
-| Módulo             | 1.1 -- Conceptos Fundamentales             |
 
----
 
-## 📖 Descripción General
+**Exploración de la Arquitectura Fundamental de Oracle Database 19c**
+
+
+
+------------------------------------------------------------------------
+
+
+
+**📌 Metadatos**
+
+
+
+| **Propiedad** | **Valor**                     |
+
+|---------------|-------------------------------|
+
+| Duración      | 45 minutos                    |
+
+| Complejidad   | Principiante                  |
+
+| Nivel Bloom   | Aplicar                       |
+
+| Módulo        | 1.1 – Conceptos Fundamentales |
+
+
+
+------------------------------------------------------------------------
+
+
+
+**📖 Descripción General**
+
+
 
 En esta práctica explorarás los componentes arquitectónicos de una instancia **Oracle Database 19c** en ejecución, utilizando:
 
-- Vistas dinámicas (V$)
+
+
+- Vistas dinámicas (V\$)
+
+
+
 - Comandos del sistema operativo Windows (CMD/PowerShell)
 
----
 
-## 🎯 Objetivos
+
+------------------------------------------------------------------------
+
+
+
+**🎯 Objetivos**
+
+
 
 Al finalizar podrás:
 
-- Consultar **V$INSTANCE** y **V$DATABASE**
+
+
+- Consultar **V\$INSTANCE** y **V\$DATABASE**
+
+
+
 - Analizar memoria (SGA/PGA)
+
+
+
 - Identificar procesos Oracle en Windows
+
+
+
 - Examinar archivos físicos (datafiles, control files, redo logs)
+
+
+
 - Consultar parámetros con SHOW PARAMETER
 
----
 
-## ⚙️ Prerrequisitos
+
+------------------------------------------------------------------------
+
+
+
+**⚙️ Prerrequisitos**
+
+
 
 **Conocimientos**
 
+
+
 - SQL básico
+
+
+
 - Conceptos de instancia vs base de datos
+
+
+
 - Uso básico de CMD o PowerShell
+
+
 
 **Acceso**
 
+
+
 - Usuario con privilegios DBA
+
+
+
 - Acceso a **SQL\*Plus**
+
+
+
 - Instancia ORCL en estado OPEN
 
----
 
-## 🖥️ Configuración Inicial (Windows)
+
+------------------------------------------------------------------------
+
+
+
+**🖥️ Configuración Inicial (Windows)**
+
+
 
 Abrir **CMD o PowerShell como administrador**
 
+
+
 **🔹 Verificar variables de entorno**
 
-```cmd
-echo %ORACLE_HOME%
-echo %ORACLE_SID%
+
+
+echo %ORACLE_HOME%\
+
+echo %ORACLE_SID%\
+
 echo %PATH%
-🔹 Definir variables (si no existen)
 
-cmd
+
+
+**🔹 Definir variables (si no existen)**
+
+
+
 set ORACLE_BASE=C:\app\oracle\
+
 set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1\
-set ORACLE_SID=ORCL
+
+set ORACLE_SID=ORCL\
+
 set PATH=%ORACLE_HOME%\bin;%PATH%
-🔹 Verificar listener
 
-cmd
+
+
+**🔹 Verificar listener**
+
+
+
 lsnrctl status
-🔹 Verificar procesos Oracle
 
-cmd
-tasklist | findstr ORCL
+
+
+**🔹 Verificar procesos Oracle**
+
+
+
+tasklist \| findstr ORCL
+
+
+
 ✔ Resultado esperado:
 
-cmd
+
+
 oracle.exe XXXX Console
+
+
+
 ⚠️ Si no ves procesos Oracle → la instancia no está activa
 
-🚀 Paso 1: Conectarse a Oracle
-sql
+
+
+------------------------------------------------------------------------
+
+
+
+**🚀 Paso 1: Conectarse a Oracle**
+
+
+
 sqlplus / as sysdba
-Configuración
 
-sql
-SET LINESIZE 120
-SET PAGESIZE 50
-SET COLSEP ' | '
-Consultas
 
-sql
-SELECT INSTANCE_NAME, STATUS, DATABASE_STATUS FROM V$INSTANCE;
-SELECT NAME, OPEN_MODE, LOG_MODE FROM V$DATABASE;
-✔ Verificación
 
-STATUS → OPEN
+**Configuración**
 
-OPEN_MODE → READ WRITE
 
-🧠 Paso 2: Memoria SGA
-sql
-SELECT NAME, VALUE, ROUND(VALUE/1024/1024,2) MB
-FROM V$SGA
+
+SET LINESIZE 120\
+
+SET PAGESIZE 50\
+
+SET COLSEP ' \| '
+
+
+
+**Consultas**
+
+
+
+SELECT INSTANCE_NAME, STATUS, DATABASE_STATUS FROM V\$INSTANCE;
+
+
+
+SELECT NAME, OPEN_MODE, LOG_MODE FROM V\$DATABASE;
+
+
+
+**✔ Verificación**
+
+
+
+- STATUS → OPEN
+
+
+
+- OPEN_MODE → READ WRITE
+
+
+
+------------------------------------------------------------------------
+
+
+
+**🧠 Paso 2: Memoria SGA**
+
+
+
+SELECT NAME, VALUE, ROUND(VALUE/1024/1024,2) MB\
+
+FROM V\$SGA\
+
 ORDER BY VALUE DESC;
 
-SELECT NAME, BYTES, ROUND(BYTES/1024/1024,2) MB, RESIZEABLE
-FROM V$SGAINFO;
-Parámetros
 
-sql
-SHOW PARAMETER sga_target
+
+SELECT NAME, BYTES, ROUND(BYTES/1024/1024,2) MB, RESIZEABLE\
+
+FROM V\$SGAINFO;
+
+
+
+**Parámetros**
+
+
+
+SHOW PARAMETER sga_target\
+
 SHOW PARAMETER pga_aggregate_target
-⚙️ Paso 3: Procesos de Fondo
-sql
-SELECT NAME, DESCRIPTION FROM V$BGPROCESS WHERE PADDR <> '00';
 
-SELECT p.SPID, b.NAME
-FROM V$BGPROCESS b
-JOIN V$PROCESS p ON b.PADDR = p.ADDR;
-🔹 En Windows
 
-cmd
-tasklist | findstr oracle
+
+------------------------------------------------------------------------
+
+
+
+**⚙️ Paso 3: Procesos de Fondo**
+
+
+
+SELECT NAME, DESCRIPTION FROM V\$BGPROCESS WHERE PADDR \<\> '00';
+
+
+
+SELECT p.SPID, b.NAME\
+
+FROM V\$BGPROCESS b\
+
+JOIN V\$PROCESS p ON b.PADDR = p.ADDR;
+
+
+
+**🔹 En Windows**
+
+
+
+tasklist \| findstr oracle
+
+
+
 O en PowerShell:
 
-powershell
-Get-Process | Where-Object {$_.ProcessName -like "*ora*"}
-✔ Procesos clave
 
-PMON
 
-SMON
+Get-Process \| Where-Object {\$\_.ProcessName -like "\*ora\*"}
 
-DBW0
 
-LGWR
 
-CKPT
+**✔ Procesos clave**
 
-💾 Paso 4: Archivos Físicos
-sql
-SELECT FILE#, NAME FROM V$DATAFILE;
-SELECT NAME FROM V$CONTROLFILE;
-SELECT GROUP#, STATUS FROM V$LOG;
-🔹 Verificar en Windows
 
-cmd
-dir C:\app\oracle\oradata\ORCL\*.dbf
-dir C:\app\oracle\oradata\ORCL\*.ctl
-dir C:\app\oracle\oradata\ORCL\*.log
-⚙️ Paso 5: Parámetros
-sql
-SHOW PARAMETER db_name
+
+- PMON
+
+
+
+- SMON
+
+
+
+- DBW0
+
+
+
+- LGWR
+
+
+
+- CKPT
+
+
+
+------------------------------------------------------------------------
+
+
+
+**💾 Paso 4: Archivos Físicos**
+
+
+
+SELECT FILE#, NAME FROM V\$DATAFILE;
+
+
+
+SELECT NAME FROM V\$CONTROLFILE;
+
+
+
+SELECT GROUP#, STATUS FROM V\$LOG;
+
+
+
+------------------------------------------------------------------------
+
+
+
+**🔹 Verificar en Windows**
+
+
+
+dir C:\app\oracle\oradata\ORCL\\.dbf\
+
+dir C:\app\oracle\oradata\ORCL\\.ctl\
+
+dir C:\app\oracle\oradata\ORCL\\.log
+
+
+
+------------------------------------------------------------------------
+
+
+
+**⚙️ Paso 5: Parámetros**
+
+
+
+SHOW PARAMETER db_name\
+
 SHOW PARAMETER diagnostic_dest
 
-SELECT NAME, VALUE FROM V$PARAMETER
+
+
+SELECT NAME, VALUE FROM V\$PARAMETER\
+
 WHERE NAME IN ('db_name','processes','sessions');
-🔹 Logs (Windows)
 
-cmd
+
+
+------------------------------------------------------------------------
+
+
+
+**🔹 Logs (Windows)**
+
+
+
 dir C:\app\oracle\diag\rdbms\orcl\ORCL\trace
+
+
+
 type C:\app\oracle\diag\rdbms\orcl\ORCL\trace\alert_ORCL.log
-✅ Validación Final
-sql
-SELECT INSTANCE_NAME, STATUS FROM V$INSTANCE;
-SELECT COUNT(*) FROM V$BH WHERE STATUS != 'free';
-SELECT COUNT(*) FROM V$DATAFILE WHERE STATUS NOT IN ('SYSTEM','ONLINE');
-🛠️ Troubleshooting (Windows)
-❌ ORA-01034
 
-sql
+
+
+------------------------------------------------------------------------
+
+
+
+**✅ Validación Final**
+
+
+
+SELECT INSTANCE_NAME, STATUS FROM V\$INSTANCE;
+
+
+
+SELECT COUNT(\*) FROM V\$BH WHERE STATUS != 'free';
+
+
+
+SELECT COUNT(\*) FROM V\$DATAFILE WHERE STATUS NOT IN ('SYSTEM','ONLINE');
+
+
+
+------------------------------------------------------------------------
+
+
+
+**🛠️ Troubleshooting (Windows)**
+
+
+
+**❌ ORA-01034**
+
+
+
 sqlplus / as sysdba
+
+
+
 STARTUP;
-❌ Variables no definidas
 
-cmd
-set ORACLE_HOME=...
+
+
+------------------------------------------------------------------------
+
+
+
+**❌ Variables no definidas**
+
+
+
+set ORACLE_HOME=...\
+
 set ORACLE_SID=ORCL
-❌ No aparecen procesos
 
-cmd
-tasklist | findstr oracle
-🧹 Limpieza
-sql
+
+
+------------------------------------------------------------------------
+
+
+
+**❌ No aparecen procesos**
+
+
+
+tasklist \| findstr oracle
+
+
+
+------------------------------------------------------------------------
+
+
+
+**🧹 Limpieza**
+
+
+
 EXIT;
-cmd
-tasklist | findstr sqlplus
-🧠 Resumen
-✔ Lo aprendido
 
-Conexión como SYSDBA
 
-Uso de vistas V$
 
-Análisis de memoria, procesos y almacenamiento
+tasklist \| findstr sqlplus
 
-Relación Oracle ↔ Windows
 
-📌 Conceptos Clave
-Instancia = Memoria + Procesos
 
-Base de datos = Archivos físicos
+------------------------------------------------------------------------
 
-Vistas V$ = introspección en tiempo real
 
-Procesos Oracle = procesos del SO
 
-⏭️ Siguientes pasos
-SGA en detalle
+**🧠 Resumen**
 
-Procesos internos
 
-Estructura lógica
 
-Backup con RMAN
+**✔ Lo aprendido**
+
+
+
+- Conexión como SYSDBA
+
+
+
+- Uso de vistas V\$
+
+
+
+- Análisis de memoria, procesos y almacenamiento
+
+
+
+- Relación Oracle ↔ Windows
+
+
+
+------------------------------------------------------------------------
+
+
+
+**📌 Conceptos Clave**
+
+
+
+- Instancia = Memoria + Procesos
+
+
+
+- Base de datos = Archivos físicos
+
+
+
+- Vistas V\$ = introspección en tiempo real
+
+
+
+- Procesos Oracle = procesos del SO
+
+
+
+------------------------------------------------------------------------
+
+
+
+**⏭️ Siguientes pasos**
+
+
+
+- SGA en detalle
+
+
+
+- Procesos internos
+
+
+
+- Estructura lógica
+
+
+
+- Backup con RMAN
+
+
+
+------------------------------------------------------------------------
+
+
 
 Si quieres, en el siguiente paso puedo:
 
-✅ Convertir este lab a PowerShell avanzado (más realista para admins Windows)
-✅ O generar versión descargable en Word/PDF profesional
+
+
+✅ Convertir este lab a **PowerShell avanzado (más realista para admins Windows)**\
+
+✅ O generar **versión descargable en Word/PDF profesional**\
+
 ✅ O integrarlo en tu curso completo con slides tipo certificación
+
+
 
 ## Recursos Adicionales
 
