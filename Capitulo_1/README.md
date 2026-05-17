@@ -57,9 +57,11 @@ Abre el `Task Manager` y asegurate que ORACLE RDBS y TNSLSNR estén en ejecució
 ```sql
 sqlplus / as sysdba
 ```
-Configuración
+Configuración del ancho de linea, número de lineas por página y separador.
 ```sql
-SET LINESIZE 120 SET PAGESIZE 50 SET COLSEP ' | '
+SET LINESIZE 120
+SET PAGESIZE 50
+SET COLSEP ' | '
 ```
 Consultas
 ```sql
