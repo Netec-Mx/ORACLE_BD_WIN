@@ -74,7 +74,10 @@ Al completar esta práctica, serás capaz de:
 
 Antes de comenzar, verifica que el entorno esté listo ejecutando los siguientes comandos en la terminal Linux como usuario `oracle`:
 
-# 🧪 Lab 01-00-01 (Windows): Exploración de la Arquitectura Fundamental de Oracle Database 19c
+# 🧪 Lab 01-00-01 (Windows)
+## Exploración de la Arquitectura Fundamental de Oracle Database 19c
+
+### 📌 Metadatos
 
 | Propiedad | Valor |
 | :--- | :--- |
@@ -83,78 +86,234 @@ Antes de comenzar, verifica que el entorno esté listo ejecutando los siguientes
 | **Nivel Bloom** | Aplicar |
 | **Módulo** | 1.1 – Conceptos Fundamentales |
 
-En esta práctica explorarás los componentes arquitectónicos de una instancia Oracle Database 19c en ejecución, utilizando vistas dinámicas (V$) y comandos del sistema operativo Windows (CMD/PowerShell). Al finalizar este laboratorio podrás consultar V$INSTANCE y V$DATABASE, analizar la distribución de memoria (SGA/PGA), identificar procesos de Oracle dentro del entorno de Windows, examinar los archivos físicos de la base de datos (datafiles, control files, redo logs), y consultar y modificar parámetros del sistema con el comando SHOW PARAMETER.
+---
 
-Para realizar esta práctica es necesario contar con conocimientos de SQL básico, conceptos teóricos de la diferencia entre Instancia y Base de Datos, uso básico de la consola de comandos de Windows (CMD o PowerShell), poseer un usuario con privilegios de Administrador de Base de Datos (DBA), acceso local o remoto a SQL*Plus, y tener una instancia de Oracle denominada ORCL en estado OPEN.
+### 📖 Descripción General
+En esta práctica explorarás los componentes arquitectónicos de una instancia **Oracle Database 19c** en ejecución, utilizando:
+* Vistas dinámicas (`V$`)
+* Comandos del sistema operativo Windows (`CMD` / `PowerShell`)
 
-Para comenzar la configuración inicial en Windows, abra la consola de comandos (CMD o PowerShell) con privilegios de Administrador y verifique las variables de entorno actuales ejecutando:
-echo %ORACLE_HOME%
-echo %ORACLE_SID%
-echo %PATH%
+### 🎯 Objetivos
+Al finalizar este laboratorio podrás:
+* Consultar `V$INSTANCE` y `V$DATABASE`.
+* Analizar la estructura de memoria (`SGA` / `PGA`).
+* Identificar los procesos de Oracle dentro del entorno de Windows.
+* Examinar los archivos físicos de la base de datos (*datafiles*, *control files*, *redo logs*).
+* Consultar parámetros de configuración con el comando `SHOW PARAMETER`.
 
-En caso de que no existan, defina las variables en la consola con los siguientes comandos:
+---
+
+### ⚙️ Prerrequisitos
+
+#### Conocimientos
+* SQL básico.
+* Comprensión conceptual de Instancia vs. Base de Datos.
+* Uso básico de la consola de comandos (`CMD` o `PowerShell`).
+
+#### Acceso
+* Usuario con privilegios de Administrador de Base de Datos (`DBA`).
+* Acceso a la herramienta interactiva `SQL*Plus`.
+* Instancia `ORCL` levantada y en estado `OPEN`.
+
+---
+
+### 🖥️ Configuración Inicial (Windows)
+
+1. Abre el **CMD** o **PowerShell** con privilegios de **Administrador**.
+
+2. 🔹 **Verificar variables de entorno actuales:**
+   ```cmd
+   echo %ORACLE_HOME%
+   echo %ORACLE_SID%
+   echo %PATH%
+🔹 Definir variables de entorno (en caso de que no existan):
+
+DOS
+
 set ORACLE_BASE=C:\app\oracle
 set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
 set ORACLE_SID=ORCL
 set PATH=%ORACLE_HOME%\bin;%PATH%
+🔹 Verificar el estado del Listener:
 
-A continuación, verifique el estado del Listener con el comando "lsnrctl status" y compruebe los procesos de Oracle activos en el Sistema Operativo con "tasklist | findstr ORCL". El resultado esperado debe mostrar "oracle.exe XXXX Console". Si no visualiza el proceso oracle.exe, significa que la instancia no está activa y debe iniciarla antes de continuar.
+DOS
 
-Para el Paso 1: Conectarse a Oracle, inicie sesión en la base de datos utilizando autenticación por sistema operativo ejecutando "sqlplus / as sysdba". Para mejorar la legibilidad de las consultas en SQL*Plus, configure los siguientes parámetros de línea:
+lsnrctl status
+🔹 Verificar la ejecución de los procesos de Oracle:
+
+DOS
+
+tasklist | findstr ORCL
+✔ Resultado esperado:
+
+Plaintext
+
+oracle.exe        XXXX Console
+⚠️ Si no visualizas ningún proceso de Oracle, significa que la instancia no se encuentra activa.
+
+🚀 Paso 1: Conectarse a Oracle
+Conéctate a la base de datos utilizando autenticación del sistema operativo:
+
+DOS
+
+sqlplus / as sysdba
+Configuración de Entorno en SQL*Plus
+Para mejorar la legibilidad de la salida de datos, ejecuta los siguientes comandos de formato:
+
+SQL
+
 SET LINESIZE 120
 SET PAGESIZE 50
 SET COLSEP ' | '
+Consultas de Verificación
+SQL
 
-Realice las consultas de verificación inicial ejecutando:
 SELECT INSTANCE_NAME, STATUS, DATABASE_STATUS FROM V$INSTANCE;
 SELECT NAME, OPEN_MODE, LOG_MODE FROM V$DATABASE;
-Como verificación obligatoria, el STATUS de la instancia debe reportar OPEN y el OPEN_MODE de la base de datos debe reportar READ WRITE.
+✔ Verificación: El valor de STATUS debe reflejar OPEN y el de OPEN_MODE debe ser READ WRITE.
 
-Para el Paso 2: Memoria SGA (System Global Area), ejecute las siguientes consultas para auditar la asignación y componentes de la estructura de memoria global:
-SELECT NAME, VALUE, ROUND(VALUE/1024/1024,2) MB FROM V$SGA ORDER BY VALUE DESC;
-SELECT NAME, BYTES, ROUND(BYTES/1024/1024,2) MB, RESIZEABLE FROM V$SGAINFO;
+🧠 Paso 2: Memoria SGA y PGA
+Ejecuta las siguientes consultas para analizar la distribución y dimensionamiento de la memoria:
 
-Compruebe los límites configurados para la gestión de memoria automática o manual mediante los comandos de verificación de parámetros de memoria:
+SQL
+
+SELECT NAME, VALUE, ROUND(VALUE/1024/1024,2) AS MB 
+FROM V$SGA 
+ORDER BY VALUE DESC;
+SQL
+
+SELECT NAME, BYTES, ROUND(BYTES/1024/1024,2) AS MB, RESIZEABLE 
+FROM V$SGAINFO;
+Consulta de Parámetros de Memoria
+SQL
+
 SHOW PARAMETER sga_target
 SHOW PARAMETER pga_aggregate_target
+⚙️ Paso 3: Procesos de Fondo (Background Processes)
+Identifica los procesos en segundo plano que interactúan con la instancia:
 
-Para el Paso 3: Procesos de Fondo (Background Processes), identifique los procesos internos que mantienen la operatividad de la instancia con las siguientes sentencias SQL:
+SQL
+
 SELECT NAME, DESCRIPTION FROM V$BGPROCESS WHERE PADDR <> '00';
-SELECT p.SPID, b.NAME FROM V$BGPROCESS b JOIN V$PROCESS p ON b.PADDR = p.ADDR;
+SQL
 
-Para realizar la verificación desde el Sistema Operativo (Windows), abra una ventana de comandos en paralelo para mapear estos procesos. En CMD ejecute "tasklist | findstr oracle", o en PowerShell ejecute "Get-Process | Where-Object {$_.ProcessName -like '*ora*'}". Los procesos clave que debe identificar son PMON (Process Monitor), SMON (System Monitor), DBW0 (Database Writer), LGWR (Log Writer) y CKPT (Checkpoint).
+SELECT p.SPID, b.NAME
+FROM V$BGPROCESS b
+JOIN V$PROCESS p ON b.PADDR = p.ADDR;
+🔹 Verificación desde el Sistema Operativo
+Puedes validar estos procesos sin salir de la terminal.
 
-Para el Paso 4: Archivos Físicos, consulte la ubicación exacta en disco de las estructuras físicas que componen la Base de Datos con las siguientes consultas:
+En CMD:
+
+DOS
+
+tasklist | findstr oracle
+En PowerShell:
+
+PowerShell
+
+Get-Process | Where-Object {$_.ProcessName -like "*ora*"}
+📌 Procesos clave a identificar: PMON, SMON, DBW0, LGWR y CKPT.
+
+💾 Paso 4: Archivos Físicos
+Consulta la ubicación y el estado de las estructuras físicas de almacenamiento:
+
+SQL
+
 SELECT FILE#, NAME FROM V$DATAFILE;
 SELECT NAME FROM V$CONTROLFILE;
 SELECT GROUP#, STATUS FROM V$LOG;
+🔹 Verificar la existencia en Windows
+Abre una consola alternativa del sistema operativo y confirma las rutas físicas:
 
-Para verificar la existencia física en Windows, salga de SQL*Plus temporalmente o abra un CMD para validar que los archivos se encuentran en las rutas indicadas ejecutando:
+DOS
+
 dir C:\app\oracle\oradata\ORCL\*.dbf
 dir C:\app\oracle\oradata\ORCL\*.ctl
 dir C:\app\oracle\oradata\ORCL\*.log
+⚙️ Paso 5: Parámetros y Logs de Diagnóstico
+Consulta de Parámetros Generales
+SQL
 
-Para el Paso 5: Parámetros del Sistema y Logs, realice la consulta de parámetros básicos ejecutando:
 SHOW PARAMETER db_name
 SHOW PARAMETER diagnostic_dest
-SELECT NAME, VALUE FROM V$PARAMETER WHERE NAME IN ('db_name','processes','sessions');
+SQL
 
-Para la inspección de Logs de Alerta en Windows, verifique las rutas del directorio de diagnóstico y visualice las últimas líneas del archivo de log principal ejecutando en la consola de comandos de Windows:
+SELECT NAME, VALUE FROM V$PARAMETER
+WHERE NAME IN ('db_name','processes','sessions');
+🔹 Inspección del Alert Log (Windows)
+Localiza y visualiza las últimas líneas del archivo de registro de alertas:
+
+DOS
+
 dir C:\app\oracle\diag\rdbms\orcl\ORCL\trace
 type C:\app\oracle\diag\rdbms\orcl\ORCL\trace\alert_ORCL.log
+✅ Validación Final
+Asegúrate de que el entorno conserve la estabilidad e integridad ejecutando:
 
-Para la Validación Final, asegúrese de que el estado del laboratorio concluye de manera íntegra y sin inconsistencias ejecutando las siguientes consultas SQL:
+SQL
+
 SELECT INSTANCE_NAME, STATUS FROM V$INSTANCE;
 SELECT COUNT(*) FROM V$BH WHERE STATUS != 'free';
 SELECT COUNT(*) FROM V$DATAFILE WHERE STATUS NOT IN ('SYSTEM','ONLINE');
+🛠️ Troubleshooting (Resolución de Problemas en Windows)
+❌ Error ORA-01034 (Oracle not available):
 
-En caso de requerir Troubleshooting (Resolución de Problemas en Windows): Si se presenta el error "❌ ORA-01034: ORACLE not available", indica que la instancia no ha sido iniciada, por lo que debe ejecutar "sqlplus / as sysdba" seguido del comando "STARTUP;". Si las variables de entorno no están definidas y comandos como sqlplus no son reconocidos, asigne manualmente las variables en la consola actual con "set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1", "set ORACLE_SID=ORCL" y "set PATH=%ORACLE_HOME%\bin;%PATH%". Si no aparecen procesos activos de Oracle, valide los servicios de Windows asociados ejecutando "tasklist | findstr oracle"; si no arroja resultados, acceda a services.msc e inicie manualmente el servicio OracleServiceORCL.
+DOS
 
-Para la Limpieza del Entorno, finalice de forma ordenada las herramientas utilizadas durante la sesión ejecutando el comando "EXIT;" en SQL*Plus, y en la consola de Windows valide el cierre de sesiones ejecutando "tasklist | findstr sqlplus".
+sqlplus / as sysdba
+SQL
 
-En resumen, lo aprendido en esta práctica incluye la conexión segura mediante roles administrativos (SYSDBA), el uso de vistas de rendimiento dinámico V$ para auditoría interna, el análisis de la distribución de memoria, procesos de fondo y almacenamiento físico, junto con la comprensión de la interacción nativa entre Oracle Database y el ecosistema Windows. Los conceptos clave a retener son que la Instancia equivale a las Estructuras de Memoria (SGA) más los Procesos de Fondo, la Base de datos es la colección de Archivos físicos en disco (Datafiles, Control files, Redo logs), las Vistas V$ representan tablas virtuales de introspección en tiempo real, y los Procesos Oracle operan como hilos de ejecución dentro del proceso unificado de sistema operativo en Windows. Como siguientes pasos sugeridos se encuentra la profundización en las sub-estructuras del SGA, los ciclos de vida e interacciones de los Procesos Internos, el mapeo de la Estructura Lógica (Tablespaces, Extents, Segments) y la configuración de respaldos integrales con RMAN.
+STARTUP;
+❌ Variables de entorno no definidas o incorrectas:
 
+DOS
 
+set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
+set ORACLE_SID=ORCL
+❌ No aparecen los procesos activos del motor:
+
+DOS
+
+tasklist | findstr oracle
+🧹 Limpieza del Entorno
+Finaliza tus sesiones de forma ordenada:
+
+SQL
+
+EXIT;
+Confirma el cierre en la terminal del sistema operativo:
+
+DOS
+
+tasklist | findstr sqlplus
+🧠 Resumen
+✔ Lo aprendido
+Conexión segura mediante autenticación SYSDBA.
+
+Uso estratégico de vistas de rendimiento dinámico (V$).
+
+Análisis granular de estructuras de memoria, procesos internos y almacenamiento.
+
+Interrelación operativa entre la capa de Oracle y el sistema operativo Windows.
+
+📌 Conceptos Clave
+Instancia = Estructuras de Memoria (SGA) + Procesos de Fondo (Background Processes).
+
+Base de datos = Archivos físicos reales (Datafiles, Control files, Redo logs).
+
+Vistas V$ = Mecanismos de introspección del diccionario de datos en tiempo real.
+
+Procesos Oracle = Mapeados directamente como subprocesos/hilos dentro del S.O.
+
+⏭️ Siguientes pasos
+Análisis detallado de la arquitectura de la SGA.
+
+Comportamiento y gestión de procesos internos.
+
+Estructuras lógicas de almacenamiento (Tablespaces, Segments, Extents).
+
+Estrategias de Backup y Recuperación utilizando RMAN.
 ## Recursos Adicionales
 
 - **Oracle Database Concepts 19c – Chapter 1 (Introduction to Oracle Database):** Documentación oficial que describe la arquitectura fundamental. Disponible en [docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/](https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/)
