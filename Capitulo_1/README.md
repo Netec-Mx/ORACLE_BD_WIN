@@ -1,5 +1,5 @@
 
-🧪 Práctica 1. Revisión de la Configuración y Arquitectura de la Base de Datos Oracle 19c 
+#🧪 Práctica 1. Revisión de la Configuración y Arquitectura de la Base de Datos Oracle 19c 
 
 Exploración de la Arquitectura Fundamental de Oracle Database 19c
 
