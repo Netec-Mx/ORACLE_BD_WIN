@@ -31,11 +31,15 @@ Instancia ORCL en estado OPEN
 Abrir CMD o PowerShell como administrador
 🔹 Verificar variables de entorno
 ```sql
-echo %ORACLE_HOME% echo %ORACLE_SID% echo %PATH%
+echo %ORACLE_HOME%
+echo %ORACLE_SID%
+echo %PATH%
 ```
-🔹 Definir variables (si no existen)
+🔹 Definir variables (si no existen), estas variables no son obligatorias en Windows pero a veces son utiles para ciertos casos.
 ```sql
-set ORACLE_BASE=C:\app\oracle set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1 set ORACLE_SID=ORCL set PATH=%ORACLE_HOME%\bin;%PATH%
+set ORACLE_BASE=C:\app\oracle
+set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
+set ORACLE_SID=ORCL set PATH=%ORACLE_HOME%\bin;%PATH%
 ```
 🔹 Verificar listener
 ```sql
