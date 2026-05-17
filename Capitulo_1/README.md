@@ -39,7 +39,8 @@ echo %PATH%
 ```sql
 set ORACLE_BASE=C:\app\oracle
 set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
-set ORACLE_SID=ORCL set PATH=%ORACLE_HOME%\bin;%PATH%
+set ORACLE_SID=ORCL
+set PATH=%ORACLE_HOME%\bin;%PATH%
 ```
 🔹 Verificar listener
 ```sql
