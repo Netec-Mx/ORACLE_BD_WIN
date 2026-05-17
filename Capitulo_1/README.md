@@ -48,10 +48,9 @@ lsnrctl status
 ```
 🔹 Verificar procesos Oracle
 ```sql
-tasklist | findstr ORCL
+Abre el `Task Manager` y asegurate que ORACLE RDBS y TNSLSNR estén en ejecución.
 ```
 ✔ Resultado esperado:
-oracle.exe XXXX Console
 ⚠️ Si no ves procesos Oracle → la instancia no está activa
 
 ## 🚀 Paso 1: Conectarse a Oracle
