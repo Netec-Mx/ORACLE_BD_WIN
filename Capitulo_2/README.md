@@ -29,7 +29,9 @@ Variables Oracle configuradas
 Abrir CMD o PowerShell como administrador
 🔹 Verificar variables
 ```ini
-echo %ORACLE_HOME% echo %ORACLE_SID% echo %ORACLE_BASE%
+echo %ORACLE_HOME%
+echo %ORACLE_SID%
+echo %ORACLE_BASE%
 ```
 🔹 Verificar instancia
 ```ini
