@@ -38,7 +38,7 @@ Si las variables no están definidas, llama al programa `ambiente.bat` creado en
 sqlplus / as sysdba
 SELECT INSTANCE_NAME, STATUS FROM V$INSTANCE;
 ```
-🔹 Verificar carpeta de red
+🔹 Verificar que existen los archivos de red en la siguieten carpeta:
 ```ini
 dir %ORACLE_HOME%\network\admin
 ```
