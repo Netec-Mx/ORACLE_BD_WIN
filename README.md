@@ -20,7 +20,7 @@ Cada uno de estos laboratorios está diseñado para ofrecerte una experiencia pr
 
 
 
-### [Práctica 1. Revisión de la Configuración y Arquitectura de la Base de Datos Oracle 19c ](CHAPTER_01/ch01-investment-portfolio/README.md) 
+### [Práctica 1. Revisión de la Configuración y Arquitectura de la Base de Datos Oracle 19c ](Capitulo_1/README.md) 
 
   - **Descripción**: Revisar configuración y la arquitectura de una base de datos Oracle.
 
