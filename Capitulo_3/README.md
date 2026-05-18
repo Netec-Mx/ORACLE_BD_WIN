@@ -1,8 +1,9 @@
-## 🧪 Lab 03-00-01 (Windows 11)
+## 🧪 Práctica 3. Configuración y Manejo de la Seguridad de la Base de Datos Oracle 19c
+
 Administración Completa de Seguridad en Oracle Database 19c
 
 ## ⚙️ Configuración Inicial
-1. Abrir PowerShell como Administrador
+1. Abrir CMD o PowerShell como Administrador
 ```sql
 $env:ORACLE_BASE="C:\app\oracle" $env:ORACLE_HOME="C:\app\oracle\product\19.0.0\dbhome_1" $env:ORACLE_SID="ORCL" $env:PATH="$env:ORACLE_HOME\bin;$env:PATH"
 ```
