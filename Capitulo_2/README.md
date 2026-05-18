@@ -3,8 +3,6 @@
 
 Arquitectura de Conectividad Oracle Net Services — Configuración y Diagnóstico
 
-## 📌 Metadatos
-
 ## 📖 Descripción General
 En este laboratorio configurarás la capa de conectividad de Oracle Net Services en Oracle Database 19c, incluyendo:
 listener.ora (servidor)
