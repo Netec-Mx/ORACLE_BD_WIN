@@ -37,10 +37,14 @@ echo %PATH%
 ```
 🔹 Definir variables (si no existen), estas variables no son obligatorias en Windows pero a veces son utiles para ciertos casos.
 ```sql
+Crea un arhivo `ambiente.bat`con notepad y agrega el siguiente contenido:
+
+notepad ambiente.bat
+
 set ORACLE_BASE=C:\app\oracle
 set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
 set ORACLE_SID=ORCL
-set PATH=%ORACLE_HOME%\bin;%PATH%
+REM set PATH=%ORACLE_HOME%\bin;%PATH%
 ```
 🔹 Verificar listener
 ```sql
