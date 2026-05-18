@@ -28,59 +28,59 @@ Cada uno de estos laboratorios está diseñado para ofrecerte una experiencia pr
 
 
 
-### [Práctica 2. Manejo de los Servicios de Red de la Base de Datos Oracle](CHAPTER_02/ch02-cashback-schema-design/README.md)
+### [Práctica 2. Manejo de los Servicios de Red de la Base de Datos Oracle](Capitulo_2/README.md) 
 
-  - **Descripción**: xxx.
+  - **Descripción**: Examinar y configurar los Servicios de Red de una base de datos Oracle.
 
-  - ⏱️ **Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_03/ch03-cashback-dgs-service/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
+  - ⏱️ **Duración estimada**: 60 min.
 
 
 
-### [Práctica 3. Nombre de la práctica](CHAPTER_04/ch04-smart-savings-goals/README.md)
+### [Práctica 3. Configuración y Manejo de la Seguridad de la Base de Datos Oracle 19c](Capitulo_3/README.md) 
 
-  - **Descripción**: xxx.
+  - **Descripción**: Examinar y configurar la Seguridad de una base de datos Oracle.
 
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_05/ch05-p2p-lending-federation/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
+  - ⏱️**Duración estimada**: 60 min.
 
 
 
-### [Práctica 3. Nombre de la práctica](CHAPTER_06/ch06-fraud-detection-subscriptions/README.md)
+### [Práctica 4. Administración del Almacenamiento de la Base de Datos Oracle 19c](Capitulo_4/README.md) 
 
-  - **Descripción**: xxx.
+  - **Descripción**: Examinar y manejar el almacenamiento de una base de datos Oracle.
 
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_07/ch07-expense-analytics-caching/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
+  - ⏱️**Duración estimada**: 90 min.
 
 
 
-### [Práctica 3. Nombre de la práctica](CHAPTER_08/ch08-carbon-footprint-governance/README.md)
+### [Práctica 5. Movimiento de Datos en Oracle 19c](Capitulo_5/README.md) 
 
-  - **Descripción**: xxx.
+  - **Descripción**: Practicar el uso de las herramientas de movimiento de datos de la base de datos Oracle.
 
-  - ⏱️**Duración estimada**: xx min.
+  - ⏱️**Duración estimada**: 90 min.
+
+
+
+### [Práctica 6. Monitoreo del Performance de la Base de Datos](Capitulo_6/README.md) 
+
+  - **Descripción**: Practicar el uso de las herramientas de movimiento de datos de la base de datos Oracle.
+
+  - ⏱️**Duración estimada**: 105 min.
+
+
+
+### [Práctica 7.Tipos de datos LOB y su Manejo en Oracle](Capitulo_7/README.md) 
+
+  - **Descripción**: Practicar el uso de los tipos de datos LOB disponibles en la base de datos Oracle.
+
+  - ⏱️**Duración estimada**: 90 min.
+
+
+
+### [Práctica 8. Temas Misceláneos DBCS y Multitenant](Capitulo_8/README.md) 
+
+  - **Descripción**: Aprender que es la Base de datos Oracle en la nube y  el manejo de bases de datos Contenedoras y Pluggables.
+
+  - ⏱️**Duración estimada**: 60 min.
 
 
 
