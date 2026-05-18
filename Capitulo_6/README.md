@@ -1,4 +1,4 @@
-# Lab 06-00-01: Metodología de Monitoreo Proactivo y Afinación de Rendimiento en Oracle Database 19c
+# Práctica 6. Monitoreo del Performance de la Base de Datos
 
 ## Metadatos
 
