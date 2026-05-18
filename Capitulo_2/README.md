@@ -63,11 +63,14 @@ copy %ORACLE_HOME%\network\admin\sqlnet.ora %ORACLE_HOME%\network\admin\backup_l
 Detener Listener
 ```ini
 lsnrctl stop
+
+- Borra los archivos originales que respaldaste:
+del *.ora
 ```
-Crear archivo
+Crear archivos
 Ruta:
 ```ini
-%ORACLE_HOME%\network\admin\listener.ora
+notepad %ORACLE_HOME%\network\admin\listener.ora
 ```
 Contenido:
 ```ini
