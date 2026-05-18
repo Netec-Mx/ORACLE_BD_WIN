@@ -8,7 +8,7 @@
 
 
 
-Te damos la bienvenida a la **plataforma de laboratorios** del curso **nombre**. Aquí podrás explorar diferentes tecnologías a través de prácticas guiadas. ¡Desarrolla tus habilidades y lleva tus conocimientos al siguiente nivel!
+Te damos la bienvenida a la **plataforma de laboratorios Windows** del curso **Oracle: Database 19c (Windows)**. Aquí podrás explorar diferentes tecnologías a través de prácticas guiadas. ¡Desarrolla tus habilidades y lleva tus conocimientos al siguiente nivel!
 
 
 
@@ -20,15 +20,15 @@ Cada uno de estos laboratorios está diseñado para ofrecerte una experiencia pr
 
 
 
-### [Práctica 1. Nombre de la práctica](CHAPTER_01/ch01-investment-portfolio/README.md) 
+### [Práctica 1. Revisión de la Configuración y Arquitectura de la Base de Datos Oracle 19c ](CHAPTER_01/ch01-investment-portfolio/README.md) 
 
-  - **Descripción**: xxx.
+  - **Descripción**: Revisar configuración y la arquitectura de una base de datos Oracle.
 
-  - ⏱️ **Duración estimada**: xx min.
+  - ⏱️ **Duración estimada**: 45 min.
 
 
 
-### [Práctica 2. Nombre de la práctica](CHAPTER_02/ch02-cashback-schema-design/README.md)
+### [Práctica 2. Manejo de los Servicios de Red de la Base de Datos Oracle](CHAPTER_02/ch02-cashback-schema-design/README.md)
 
   - **Descripción**: xxx.
 
