@@ -137,11 +137,13 @@ sqlplus / as sysdba
 ```
 🔹 Método 2: TNS
 ```ini
-sqlplus system/Oracle_1234@ORCL
+sqlplus sqlplus system/oracle_4U@orcl
+show user
 ```
 🔹 Método 3: Easy Connect
 ```ini
-sqlplus system/Oracle_1234@localhost:1521/ORCL
+sqlplus system/oracle_4U@localhost:1521/ORCL
+show user
 ```
 
 🔹 Ver sesiones
