@@ -1,4 +1,4 @@
-# Lab 08-00-01: Introducción al Cloud, Arquitectura Multitenant y Operaciones RMAN
+# Práctica 8. Temas Misceláneos DBCS y Multitenant
 
 ## Metadatos
 
