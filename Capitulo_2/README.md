@@ -29,11 +29,9 @@ Variables Oracle configuradas
 Abrir CMD o PowerShell como administrador
 🔹 Verificar variables
 ```ini
-echo %ORACLE_HOME%
-echo %ORACLE_SID%
-echo %ORACLE_BASE%
+set|findstr ORA
 
-Si las variables no están definidas, llama al programa `ambiente.bat`.
+Si las variables no están definidas, llama al programa `ambiente.bat` creado en la práctica anterior.
 ```
 🔹 Verificar instancia
 ```ini
