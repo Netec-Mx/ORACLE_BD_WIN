@@ -1,4 +1,5 @@
-# Lab 05-00-01: Exportación, Importación y Carga de Datos con Oracle Data Pump, SQL*Loader y Tablas Externas
+# Práctica 5. Movimiento de Datos en Oracle 19c
+
 
 ## Metadatos
 
