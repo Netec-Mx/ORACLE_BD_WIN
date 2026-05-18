@@ -51,9 +51,12 @@ Ver archivos
 ```ini
 dir %ORACLE_HOME%\network\admin
 ```
-Backup
+Crea una carpeta `backup_lab02` y haz un respaldo de los archivos de configuración de red originales.
 ```ini
-mkdir %ORACLE_HOME%\network\admin\backup_lab02 copy %ORACLE_HOME%\network\admin\listener.ora %ORACLE_HOME%\network\admin\backup_lab02\listener.ora.bak copy %ORACLE_HOME%\network\admin\tnsnames.ora %ORACLE_HOME%\network\admin\backup_lab02\tnsnames.ora.bak copy %ORACLE_HOME%\network\admin\sqlnet.ora %ORACLE_HOME%\network\admin\backup_lab02\sqlnet.ora.bak
+mkdir %ORACLE_HOME%\network\admin\backup_lab02
+copy %ORACLE_HOME%\network\admin\listener.ora %ORACLE_HOME%\network\admin\backup_lab02\listener.ora.bak
+copy %ORACLE_HOME%\network\admin\tnsnames.ora %ORACLE_HOME%\network\admin\backup_lab02\tnsnames.ora.bak
+copy %ORACLE_HOME%\network\admin\sqlnet.ora %ORACLE_HOME%\network\admin\backup_lab02\sqlnet.ora.bak
 ```
 
 ## ⚙️ Paso 2: Configurar listener.ora
