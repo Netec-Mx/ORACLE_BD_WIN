@@ -126,12 +126,20 @@ notepad %ORACLE_HOME%\network\admin\sqlnet.ora
 ```
 Contenido:
 ```ini
+# Autenticación del sistema operativo
 NAMES.DIRECTORY_PATH = (TNSNAMES, EZCONNECT)
+# Permite conexión como "/ as sysdba" sin contraseña
 SQLNET.AUTHENTICATION_SERVICES = (NTS)
+# Tiempo de espera para operaciones de red (segundos)
 SQLNET.INBOUND_CONNECT_TIMEOUT = 60
+# Tiempo de espera para operaciones de red (segundos)
 SQLNET.SEND_TIMEOUT = 60
 SQLNET.RECV_TIMEOUT = 60
+# Registro de trazas del cliente (para diagnóstico)
+# Niveles: OFF, USER, ADMIN, SUPPORT
 TRACE_LEVEL_CLIENT = OFF
+# Expiración de conexiones inactivas (minutos)
+# 0 = sin expiración (no recomendado en producción)
 SQLNET.EXPIRE_TIME = 10
 ```
 Recargar el LISTENER
@@ -208,9 +216,10 @@ SHOW PARAMETER local_listener;
 
 ## ✅ Validación Final
 ```ini
-lsnrctl status lsnrctl services
+lsnrctl status
+lsnrctl services
 tnsping ORCL
-sqlplus system/Oracle_1234@localhost:1521/ORCL
+sqlplus system/oracle_4U@localhost:1521/ORCL
 ```
 
 ## 🛠️ Troubleshooting
@@ -229,7 +238,8 @@ ORA-12154
 ```
 Verificar:
 ```ini
-tnsping ORCL echo %TNS_ADMIN%
+tnsping ORCL
+echo %TNS_ADMIN%
 ```
 
 ## 🧹 Limpieza
@@ -253,250 +263,6 @@ LREG = registro automático
 Shared Server
 Connection Manager
 Alta concurrencia
-
-## 🚀 Si quieres seguir avanzando
-Puedo ayudarte a:
-Convertir este lab en slides tipo certificación (30–40 diapositivas)
-Crear laboratorio Docker + Windows híbrido
-Diseñar escenario enterprise (multi-listener + HA + balanceo)
-
-
-
-
-
-
-
-
-
-
-
-## 🧪 Lab 02-00-01 (Windows)
-Arquitectura de Conectividad Oracle Net Services — Configuración y Diagnóstico
-
-## 📌 Metadatos
-
-## 📖 Descripción General
-En este laboratorio configurarás la capa de conectividad de Oracle Net Services en Oracle Database 19c, incluyendo:
-listener.ora (servidor)
-tnsnames.ora (cliente)
-sqlnet.ora (parámetros globales)
-
-## 🎯 Objetivos
-Al finalizar podrás:
-Configurar y administrar el Listener
-Crear aliases TNS
-Conectarte usando 3 métodos
-Diagnosticar errores ORA comunes
-Ajustar sqlnet.ora
-
-## ⚙️ Prerrequisitos
-Lab 01 completado
-SQL básico
-CMD / PowerShell
-Variables Oracle configuradas
-
-## 🖥️ Configuración Inicial (Windows)
-Abrir CMD o PowerShell como administrador
-🔹 Verificar variables
-```ini
-echo %ORACLE_HOME% echo %ORACLE_SID% echo %ORACLE_BASE%
-```
-🔹 Verificar instancia
-```ini
-sqlplus / as sysdba
-SELECT INSTANCE_NAME, STATUS FROM V$INSTANCE;
-```
-🔹 Verificar carpeta de red
-```ini
-dir %ORACLE_HOME%\network\admin
-```
-
-## 🚀 Paso 1: Estado del Listener
-```ini
-lsnrctl status
-```
-Ver archivos
-```ini
-dir %ORACLE_HOME%\network\admin
-```
-Backup
-```ini
-mkdir %ORACLE_HOME%\network\admin\backup_lab02 copy %ORACLE_HOME%\network\admin\listener.ora %ORACLE_HOME%\network\admin\backup_lab02\listener.ora.bak copy %ORACLE_HOME%\network\admin\tnsnames.ora %ORACLE_HOME%\network\admin\backup_lab02\tnsnames.ora.bak copy %ORACLE_HOME%\network\admin\sqlnet.ora %ORACLE_HOME%\network\admin\backup_lab02\sqlnet.ora.bak
-```
-
-## ⚙️ Paso 2: Configurar listener.ora
-Detener Listener
-```ini
-lsnrctl stop
-```
-Crear archivo
-Ruta:
-```ini
-%ORACLE_HOME%\network\admin\listener.ora
-```
-Contenido:
-```ini
-LISTENER = (DESCRIPTION_LIST = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) ) ) SID_LIST_LISTENER = (SID_LIST = (SID_DESC = (GLOBAL_DBNAME = ORCL) (ORACLE_HOME = C:\app\oracle\product\19.3.0\dbhome_1) (SID_NAME = ORCL) ) ) INBOUND_CONNECT_TIMEOUT_LISTENER = 60 TRACE_LEVEL_LISTENER = OFF
-```
-Iniciar
-```ini
-lsnrctl start
-lsnrctl status
-```
-
-## 🔗 Paso 3: Configurar tnsnames.ora
-Ruta:
-```ini
-%ORACLE_HOME%\network\admin\tnsnames.ora
-```
-Contenido:
-```ini
-ORCL = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ORCL) ) ) ORACLE_DB_LAB = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ORCL) ) ) ORCL_TIMEOUT = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ORCL) ) (CONNECT_TIMEOUT = 30) )
-```
-
-🔹 Probar conectividad
-```ini
-tnsping ORCL tnsping ORACLE_DB_LAB tnsping ORCL_TIMEOUT
-```
-✔ Resultado esperado:
-OK (10 msec)
-
-## ⚙️ Paso 4: Configurar sqlnet.ora
-Ruta:
-```ini
-%ORACLE_HOME%\network\admin\sqlnet.ora
-```
-Contenido:
-```ini
-NAMES.DIRECTORY_PATH = (TNSNAMES, EZCONNECT) SQLNET.AUTHENTICATION_SERVICES = (NTS) SQLNET.INBOUND_CONNECT_TIMEOUT = 60 SQLNET.SEND_TIMEOUT = 60 SQLNET.RECV_TIMEOUT = 60 TRACE_LEVEL_CLIENT = OFF SQLNET.EXPIRE_TIME = 10
-```
-Recargar
-```ini
-lsnrctl reload
-```
-
-## 🔌 Paso 5: Pruebas de Conexión
-🔹 Método 1: Directo
-```ini
-sqlplus / as sysdba
-```
-🔹 Método 2: TNS
-```ini
-sqlplus system/Oracle_1234@ORCL
-```
-🔹 Método 3: Easy Connect
-```ini
-sqlplus system/Oracle_1234@localhost:1521/ORCL
-```
-
-🔹 Ver sesiones
-```ini
-SELECT USERNAME, MACHINE, PROGRAM FROM V$SESSION WHERE USERNAME IS NOT NULL;
-```
-
-## 🧪 Paso 6: Diagnóstico
-
-❌ Escenario 1: Listener caído
-```ini
-lsnrctl stop sqlplus system/Oracle_1234@ORCL
-```
-✔ Error esperado:
-```ini
-ORA-12541: TNS:no listener
-```
-Diagnóstico Windows
-```ini
-tasklist | findstr tnslsnr netstat -ano | findstr 1521
-```
-
-❌ Escenario 2: Servicio incorrecto
-Agregar en tnsnames.ora:
-ORCL_ERROR = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ERROR) ) )
-```ini
-tnsping ORCL_ERROR sqlplus system/Oracle_1234@ORCL_ERROR
-```
-✔ Error esperado:
-```ini
-ORA-12514
-```
-
-## 📄 Logs del Listener
-Ruta típica Windows:
-```ini
-dir %ORACLE_BASE%\diag\tnslsnr
-```
-Ver log:
-```ini
-type log.xml
-```
-
-## 📊 Paso 7: Información desde Oracle
-```ini
-SELECT USERNAME, PROGRAM, MACHINE FROM V$SESSION;
-SELECT NAME FROM V$ACTIVE_SERVICES;
-SHOW PARAMETER local_listener;
-```
-
-## ✅ Validación Final
-```ini
-lsnrctl status lsnrctl services
-tnsping ORCL
-sqlplus system/Oracle_1234@localhost:1521/ORCL
-```
-
-## 🛠️ Troubleshooting
-```ini
-ORA-12541
-lsnrctl start
-```
-
-```ini
-ORA-12514
-ALTER SYSTEM REGISTER;
-```
-
-```ini
-ORA-12154
-```
-Verificar:
-```ini
-tnsping ORCL echo %TNS_ADMIN%
-```
-
-## 🧹 Limpieza
-Eliminar alias erróneo:
-Editar tnsnames.ora manualmente
-
-## 🧠 Resumen
-✔ Logros
-Configuración completa de Oracle Net
-Uso de Listener
-Conexiones por múltiples métodos
-Diagnóstico de errores reales
-
-## 📌 Conceptos Clave
-Listener = punto de entrada
-TNS = abstracción de conexión
-Easy Connect = conexión directa
-LREG = registro automático
-
-## ⏭️ Siguientes pasos
-Shared Server
-Connection Manager
-Alta concurrencia
-
-## 🚀 Si quieres seguir avanzando
-Puedo ayudarte a:
-Convertir este lab en slides tipo certificación (30–40 diapositivas)
-Crear laboratorio Docker + Windows híbrido
-Diseñar escenario enterprise (multi-listener + HA + balanceo)
-
-
-
-
-
-
-
 
 
 
