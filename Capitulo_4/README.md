@@ -1,4 +1,4 @@
-# Lab 04-00-01: Gestión de Tablespaces, Datafiles, Undo, Temp y ASM en Oracle Database 19c
+# Práctica 4. Administración del Almacenamiento de la Base de Datos Oracle 19c 
 
 ## Metadatos
 
