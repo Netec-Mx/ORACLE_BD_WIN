@@ -114,96 +114,13 @@ lsnrctl status
 ---
 
 ## 🔗 Paso 3: Configurar tnsnames.ora
-*********************
+
 **Objetivo:** Crear el archivo `tnsnames.ora` con múltiples aliases TNS que permitan conectarse a la base de datos mediante nombres lógicos, facilitando la portabilidad y el mantenimiento de las aplicaciones.
 
 **Instrucciones:**
 
-1. Crea el archivo `tnsnames.ora` con varios aliases de conexión:
+Crea el archivo `tnsnames.ora` con varios aliases de conexión:
 
-   ```bash
-   cat > $ORACLE_HOME/network/admin/tnsnames.ora << 'EOF'
-   # ============================================================
-   # Oracle TNS Names Configuration File
-   # Archivo: tnsnames.ora
-   # Ubicación: $ORACLE_HOME/network/admin/
-   # Propósito: Resolución de nombres de servicios Oracle (aliases TNS)
-   # Lab: 02-00-01 - Arquitectura de Conectividad
-   # ============================================================
-
-   # Alias principal para la base de datos ORCL
-   # Conexión estándar mediante TCP/IP
-   ORCL =
-     (DESCRIPTION =
-       (ADDRESS_LIST =
-         (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
-       )
-       (CONNECT_DATA =
-         (SERVER = DEDICATED)
-         (SERVICE_NAME = ORCL)
-       )
-     )
-
-   # Alias alternativo con nombre descriptivo para aplicaciones
-   ORACLE_DB_LAB =
-     (DESCRIPTION =
-       (ADDRESS_LIST =
-         (ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))
-       )
-       (CONNECT_DATA =
-         (SERVER = DEDICATED)
-         (SERVICE_NAME = ORCL)
-       )
-     )
-
-   # Alias para conexión con servidor compartido (Shared Server)
-   # Nota: Requiere que Shared Server esté configurado en la instancia
-   ORCL_SHARED =
-     (DESCRIPTION =
-       (ADDRESS_LIST =
-         (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
-       )
-       (CONNECT_DATA =
-         (SERVER = SHARED)
-         (SERVICE_NAME = ORCL)
-       )
-     )
-
-   # Alias con parámetros de timeout para conexiones críticas
-   ORCL_TIMEOUT =
-     (DESCRIPTION =
-       (ADDRESS_LIST =
-         (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
-       )
-       (CONNECT_DATA =
-         (SERVER = DEDICATED)
-         (SERVICE_NAME = ORCL)
-       )
-       (CONNECT_TIMEOUT = 30)
-       (RETRY_COUNT = 3)
-     )
-   EOF
-   ```
-
-2. Verifica la sintaxis del archivo creado:
-
-   ```bash
-   cat $ORACLE_HOME/network/admin/tnsnames.ora
-   ```
-
-3. Verifica la conectividad de cada alias usando `tnsping`:
-
-   ```bash
-   # Probar alias ORCL
-   tnsping ORCL
-
-   # Probar alias alternativo
-   tnsping ORACLE_DB_LAB
-
-   # Probar alias con timeout
-   tnsping ORCL_TIMEOUT
-   ```
-*********************
 Ruta:
 ```ini
 notepad %ORACLE_HOME%\network\admin\tnsnames.ora
