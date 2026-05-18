@@ -1,4 +1,4 @@
-# Lab 07-00-01: Tipos de Datos LOB — Creación, Almacenamiento y Manipulación con DBMS_LOB
+# Práctica 7. Tipos de datos LOB y su Manejo en Oracle
 
 ## Metadatos
 
