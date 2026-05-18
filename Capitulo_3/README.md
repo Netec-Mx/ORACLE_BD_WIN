@@ -3,25 +3,23 @@
 Administración Completa de Seguridad en Oracle Database 19c
 
 ## ⚙️ Configuración Inicial
+
 1. Abrir CMD o PowerShell como Administrador
-```sql
-$env:ORACLE_BASE="C:\app\oracle" $env:ORACLE_HOME="C:\app\oracle\product\19.0.0\dbhome_1" $env:ORACLE_SID="ORCL" $env:PATH="$env:ORACLE_HOME\bin;$env:PATH"
-```
+🔹 Verificar variables
+```ini
+set|findstr ORA
 
+Si las variables no están definidas, llama al programa `ambiente.bat` creado en la práctica anterior.
+```
 2. Verificar instancia
-```sql
+```ini
 sqlplus / as sysdba
-SELECT instance_name, status, open_mode FROM v$instance;
+SELECT INSTANCE_NAME, STATUS, OPEN_MODE FROM V$INSTANCE;
 ```
-
-3. Verificar PDB
+3. Crear directorio de trabajo
 ```sql
-SELECT name, open_mode FROM v$pdbs; ALTER PLUGGABLE DATABASE ORCLPDB1 OPEN;
-```
-
-4. Crear directorio de trabajo
-```sql
-mkdir C:\lab03 cd C:\lab03
+mkdir C:\lab03
+cd C:\lab03
 ```
 
 ## 🧱 Paso 1: Tablespace y Datos de Prueba
