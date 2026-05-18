@@ -1,5 +1,6 @@
 
-## 🧪 Lab 02-00-01 (Windows)
+## 🧪 Práctica 2. Manejo de los Servicios de Red de la Base de Datos Oracle
+
 Arquitectura de Conectividad Oracle Net Services — Configuración y Diagnóstico
 
 ## 📌 Metadatos
@@ -19,7 +20,7 @@ Diagnosticar errores ORA comunes
 Ajustar sqlnet.ora
 
 ## ⚙️ Prerrequisitos
-Lab 01 completado
+Práctica 01 completada
 SQL básico
 CMD / PowerShell
 Variables Oracle configuradas
