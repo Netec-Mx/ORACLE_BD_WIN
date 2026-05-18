@@ -101,7 +101,7 @@ lsnrctl status
 ## 🔗 Paso 3: Configurar tnsnames.ora
 Ruta:
 ```ini
-%ORACLE_HOME%\network\admin\tnsnames.ora
+notepad %ORACLE_HOME%\network\admin\tnsnames.ora
 ```
 Contenido:
 ```ini
@@ -117,16 +117,22 @@ tnsping ORACLE_DB_LAB
 tnsping ORCL_TIMEOUT
 ```
 ✔ Resultado esperado:
-OK (10 msec)
+OK (xx msec)
 
 ## ⚙️ Paso 4: Configurar sqlnet.ora
 Ruta:
 ```ini
-%ORACLE_HOME%\network\admin\sqlnet.ora
+notepad %ORACLE_HOME%\network\admin\sqlnet.ora
 ```
 Contenido:
 ```ini
-NAMES.DIRECTORY_PATH = (TNSNAMES, EZCONNECT) SQLNET.AUTHENTICATION_SERVICES = (NTS) SQLNET.INBOUND_CONNECT_TIMEOUT = 60 SQLNET.SEND_TIMEOUT = 60 SQLNET.RECV_TIMEOUT = 60 TRACE_LEVEL_CLIENT = OFF SQLNET.EXPIRE_TIME = 10
+NAMES.DIRECTORY_PATH = (TNSNAMES, EZCONNECT)
+SQLNET.AUTHENTICATION_SERVICES = (NTS)
+SQLNET.INBOUND_CONNECT_TIMEOUT = 60
+SQLNET.SEND_TIMEOUT = 60
+SQLNET.RECV_TIMEOUT = 60
+TRACE_LEVEL_CLIENT = OFF
+SQLNET.EXPIRE_TIME = 10
 ```
 Recargar el LISTENER
 ```ini
