@@ -71,8 +71,23 @@ Ruta:
 ```
 Contenido:
 ```ini
-LISTENER = (DESCRIPTION_LIST = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) ) )
-SID_LIST_LISTENER = (SID_LIST = (SID_DESC = (GLOBAL_DBNAME = ORCL) (ORACLE_HOME = C:\app\oracle\product\19.3.0\dbhome_1) (SID_NAME = ORCL) ) ) INBOUND_CONNECT_TIMEOUT_LISTENER = 60 TRACE_LEVEL_LISTENER = OFF
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (SID_NAME = CLRExtProc)
+      (ORACLE_HOME = C:\app\oracle\product\19.3.0\dbhome_1)
+      (PROGRAM = extproc)
+      (ENVS = "EXTPROC_DLLS=ONLY:C:\app\oracle\product\19.3.0\dbhome_1\bin\oraclr19.dll")
+    )
+  )
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = Localhost)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
 ```
 Iniciar
 ```ini
@@ -94,7 +109,9 @@ ORCL_TIMEOUT = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT
 
 🔹 Probar conectividad
 ```ini
-tnsping ORCL tnsping ORACLE_DB_LAB tnsping ORCL_TIMEOUT
+tnsping ORCL
+tnsping ORACLE_DB_LAB
+tnsping ORCL_TIMEOUT
 ```
 ✔ Resultado esperado:
 OK (10 msec)
@@ -108,7 +125,7 @@ Contenido:
 ```ini
 NAMES.DIRECTORY_PATH = (TNSNAMES, EZCONNECT) SQLNET.AUTHENTICATION_SERVICES = (NTS) SQLNET.INBOUND_CONNECT_TIMEOUT = 60 SQLNET.SEND_TIMEOUT = 60 SQLNET.RECV_TIMEOUT = 60 TRACE_LEVEL_CLIENT = OFF SQLNET.EXPIRE_TIME = 10
 ```
-Recargar
+Recargar el LISTENER
 ```ini
 lsnrctl reload
 ```
