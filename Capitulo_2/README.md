@@ -32,6 +32,8 @@ Abrir CMD o PowerShell como administrador
 echo %ORACLE_HOME%
 echo %ORACLE_SID%
 echo %ORACLE_BASE%
+
+Si las variables no están definidas, llama al programa `ambiente.bat`.
 ```
 🔹 Verificar instancia
 ```ini
