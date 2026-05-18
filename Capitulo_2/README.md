@@ -164,7 +164,8 @@ SELECT USERNAME, MACHINE, PROGRAM FROM V$SESSION WHERE USERNAME IS NOT NULL;
 
 ❌ Escenario 1: Listener caído
 ```ini
-lsnrctl stop sqlplus system/Oracle_1234@ORCL
+lsnrctl stop
+sqlplus system/oracle_4U@ORCL
 ```
 ✔ Error esperado:
 ```ini
@@ -172,7 +173,9 @@ ORA-12541: TNS:no listener
 ```
 Diagnóstico Windows
 ```ini
-tasklist | findstr tnslsnr netstat -ano | findstr 1521
+- Checa que Oracle y el Listener esten activos desde el Task Manager.
+- Checa que el puerto 1521 este escuchando peticiones de conexión.
+netstat -ano | findstr 1521
 ```
 
 ❌ Escenario 2: Servicio incorrecto
