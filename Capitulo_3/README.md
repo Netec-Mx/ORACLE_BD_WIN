@@ -1,6 +1,8 @@
-REM Lab 03-00-01: Administración Completa de Seguridad en Oracle Database — Usuarios, Privilegios, Roles, Perfiles y Auditoría
+## 🧪 Práctica 3. Configuración y Manejo de la Seguridad de la Base de Datos Oracle 19c
 
-#REM Metadatos
+Administración Completa de Seguridad en Oracle Database 19c
+
+# Metadatos
 
 | Propiedad | Valor |
 |-----------|-------|
@@ -11,7 +13,7 @@ REM Lab 03-00-01: Administración Completa de Seguridad en Oracle Database — U
 
 ---
 
-#REM Descripción General
+# Descripción General
 
 En esta práctica implementarás un modelo completo de seguridad en Oracle Database 19c, abarcando desde la creación de usuarios con atributos de seguridad avanzados hasta la configuración de auditoría unificada para rastrear operaciones críticas. Trabajarás con los comandos `CREATE USER`, `ALTER USER`, `GRANT`, `REVOKE`, `CREATE ROLE`, `CREATE PROFILE` y las políticas de auditoría de Oracle Unified Auditing.
 
@@ -19,7 +21,7 @@ Esta práctica refleja escenarios reales de administración de bases de datos em
 
 ---
 
-#REM Objetivos de Aprendizaje
+# Objetivos de Aprendizaje
 
 Al completar esta práctica, serás capaz de:
 
@@ -31,27 +33,26 @@ Al completar esta práctica, serás capaz de:
 
 ---
 
-#REM Prerrequisitos
+# Prerrequisitos
 
-##REM Conocimiento Requerido
+## Conocimiento Requerido
 
 - Comprensión de conceptos de seguridad: autenticación, autorización y auditoría en bases de datos
 - Familiaridad con comandos DDL básicos de Oracle (`CREATE TABLE`, `CREATE VIEW`)
 - Conocimiento de la arquitectura CDB/PDB de Oracle Database 19c
 - Práctica 02-00-01 completada (conectividad Oracle Net operativa y listener activo)
 
-##REM Acceso Requerido
+## Acceso Requerido
 
 - Acceso como DBA (`SYS` o `SYSTEM`) a la base de datos Oracle 19c
-- Sesión SSH activa a la máquina virtual Windows 8.x
+- Sesión SSH activa o con RDP a la máquina virtual Windows 11 o Server
 - SQL*Plus disponible en el PATH del sistema operativo
-- Acceso a una PDB (Pluggable Database) operativa, por ejemplo `ORCLPDB1`
 
 ---
 
-#REM Entorno de Laboratorio
+# Entorno de Laboratorio
 
-##REM Requisitos de Hardware
+## Requisitos de Hardware
 
 | Componente | Especificación |
 |------------|----------------|
@@ -60,35 +61,38 @@ Al completar esta práctica, serás capaz de:
 | Almacenamiento | 100 GB libres en disco (SSD recomendado) |
 | Red | Adaptador de red funcional con loopback |
 
-##REM Requisitos de Software
+## Requisitos de Software
 
 | Software | Versión | Propósito |
 |----------|---------|-----------|
 | Oracle Database | 19c (19.3+) | Motor principal de base de datos |
-| Windows | 8.x (8.7 o 8.8) | Sistema operativo huésped |
+| Windows | 11x o Server 19+ | Sistema operativo huésped |
 | SQL*Plus | Incluido con Oracle 19c | Ejecución de comandos SQL/DDL |
 | Oracle SQL Developer | 23.1 o superior | Validación gráfica opcional |
 | CMD / PowerShell | 0.79+ / Nativo | Acceso a línea de comandos |
 
-##REM Configuración Inicial
+## Configuración Inicial
 
 Antes de comenzar, verifica que el entorno Oracle esté operativo y establece las variables de entorno necesarias:
 
 ```cmd
-REM Conectarse a la VM Windows via SSH
-ssh oracle@192.168.56.101
+Conectarse a la VM Windows via RDP o SSH
 
-REM Configurar variables de entorno Oracle
+Configurar variables de entorno Oracle
+
 set ORACLE_BASE=C:\app\oracle
 set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
 set ORACLE_SID=ORCL
 set PATH=%ORACLE_HOME%\bin;%PATH%
 
-REM Verificar que la instancia esté activa
-sqlplus -S / as sysdba <<EOF
-SELECT instance_name, status, open_mode FROM v\$instance;
+O llamar al script `ambiente.bat` que se creo en la practica 1.
+
+Verificar que la instancia esté activa
+
+sqlplus / as sysdba
+SELECT instance_name, status, open_mode FROM v$instance;
 EXIT;
-EOF
+
 ```
 
 **Salida esperada de verificación:**
@@ -100,9 +104,9 @@ orcl             OPEN         READ WRITE
 ```
 
 ```cmd
-REM Verificar que la PDB esté abierta
+ Verificar que la PDB esté abierta
 sqlplus -S / as sysdba <<EOF
-SELECT name, open_mode FROM v\$pdbs;
+SELECT name, open_mode FROM v$pdbs;
 EXIT;
 EOF
 ```
@@ -119,16 +123,16 @@ ORCLPDB1                       READ WRITE
 > **Nota:** Si `ORCLPDB1` aparece en modo `MOUNTED`, ejecuta: `ALTER PLUGGABLE DATABASE ORCLPDB1 OPEN;`
 
 ```cmd
-REM Crear directorio de trabajo para los scripts de esta práctica
+ Crear directorio de trabajo para los scripts de esta práctica
 mkdir C:\lab03
 cd C:\lab03
 ```
 
 ---
 
-#REM Instrucciones Paso a Paso
+# Instrucciones Paso a Paso
 
-##REM Paso 1: Crear el Tablespace de Práctica y Preparar el Entorno
+## Paso 1: Crear el Tablespace de Práctica y Preparar el Entorno
 
 **Objetivo:** Crear un tablespace dedicado `PRACTICE_TS` en la PDB para almacenar los objetos de esta práctica, siguiendo la recomendación de aislamiento del entorno de laboratorio.
 
@@ -163,7 +167,7 @@ cd C:\lab03
    WHERE  tablespace_name = 'PRACTICE_TS';
    ```
 
-3. Crea también una tabla de datos sensibles que usaremos para las pruebas de privilegios:
+3. Crea también una tabla de datos sensibles que usaos para las pruebas de privilegios:
 
    ```sql
    -- Crear tabla de prueba como SYSTEM en ORCLPDB1
@@ -214,7 +218,7 @@ EMP_ID NOMBRE              SALARIO DEPARTAMENTO FECHA_INGRESO
 
 ---
 
-##REM Paso 2: Crear Perfiles de Usuario con Políticas de Contraseña y Recursos
+## Paso 2: Crear Perfiles de Usuario con Políticas de Contraseña y Recursos
 
 **Objetivo:** Definir dos perfiles (`PERFIL_DESARROLLADOR` y `PERFIL_READONLY`) con políticas de contraseña y límites de recursos diferenciados antes de crear los usuarios, ya que los perfiles deben existir previamente.
 
@@ -318,7 +322,7 @@ resource_limit       boolean     TRUE
 
 ---
 
-##REM Paso 3: Crear Usuarios con Atributos Completos de Seguridad
+## Paso 3: Crear Usuarios con Atributos Completos de Seguridad
 
 **Objetivo:** Crear tres usuarios con diferentes configuraciones de seguridad que representen roles empresariales reales: un desarrollador, un usuario de solo lectura y un administrador de aplicación.
 
@@ -434,7 +438,7 @@ RPT_MARIA   PRACTICE_TS              0 0 MB
 
 ---
 
-##REM Paso 4: Otorgar Privilegios de Sistema
+## Paso 4: Otorgar Privilegios de Sistema
 
 **Objetivo:** Aplicar el principio de mínimo privilegio otorgando únicamente los privilegios de sistema necesarios para cada rol de usuario, verificando que los privilegios se registran correctamente en el diccionario de datos.
 
@@ -498,8 +502,8 @@ RPT_MARIA   PRACTICE_TS              0 0 MB
 4. Prueba que los usuarios pueden conectarse con sus nuevos privilegios:
 
    ```cmd
-   REM Abrir una segunda terminal SSH para probar conectividad
-   REM (ejecutar desde el shell de Windows, NO desde SQL*Plus)
+    Abrir una segunda terminal SSH para probar conectividad
+    (ejecutar desde el shell de Windows, NO desde SQL*Plus)
    ```
 
    ```sql
@@ -565,7 +569,7 @@ TEST_DEV
 
 ---
 
-##REM Paso 5: Otorgar y Revocar Privilegios de Objeto
+## Paso 5: Otorgar y Revocar Privilegios de Objeto
 
 **Objetivo:** Aplicar privilegios de objeto sobre la tabla `empleados_sensibles` a los diferentes usuarios, verificando el principio de mínimo privilegio y el efecto de revocar privilegios.
 
@@ -681,7 +685,7 @@ ORA-01031: insufficient privileges
 
 ---
 
-##REM Paso 6: Crear y Gestionar Roles Personalizados
+## Paso 6: Crear y Gestionar Roles Personalizados
 
 **Objetivo:** Crear roles `ROL_READONLY` y `ROL_DEVELOPER` que encapsulen conjuntos de privilegios, simplificando la administración de seguridad cuando hay múltiples usuarios con los mismos requisitos de acceso.
 
@@ -852,7 +856,7 @@ TOTAL_EMPLEADOS
 
 ---
 
-##REM Paso 7: Modificar Usuarios — Bloqueo, Expiración y Cambio de Atributos
+## Paso 7: Modificar Usuarios — Bloqueo, Expiración y Cambio de Atributos
 
 **Objetivo:** Practicar operaciones de mantenimiento del ciclo de vida de usuarios: bloquear cuentas durante mantenimiento, forzar cambio de contraseña y modificar atributos de almacenamiento.
 
@@ -978,7 +982,7 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
 
 ---
 
-##REM Paso 8: Configurar Oracle Unified Auditing
+## Paso 8: Configurar Oracle Unified Auditing
 
 **Objetivo:** Habilitar Oracle Unified Auditing para registrar operaciones críticas sobre la tabla de empleados y operaciones DDL, consultando `UNIFIED_AUDIT_TRAIL` para verificar los registros generados.
 
@@ -1166,7 +1170,7 @@ USUARIO_INEXISTENTE LOGON                   1    1017    1017
 
 ---
 
-##REM Paso 9: Consultas Avanzadas del Diccionario de Datos
+## Paso 9: Consultas Avanzadas del Diccionario de Datos
 
 **Objetivo:** Consolidar el conocimiento del diccionario de datos generando reportes completos del estado de seguridad de la base de datos, como lo haría un DBA en un entorno de producción.
 
@@ -1287,9 +1291,9 @@ APP_ERP     EXPIRED & LOCKED                       15-JAN-2024
 
 ---
 
-#REM Validación y Pruebas
+# Validación y Pruebas
 
-##REM Criterios de Éxito
+## Criterios de Éxito
 
 - [ ] El tablespace `PRACTICE_TS` fue creado exitosamente y está en estado `ONLINE`
 - [ ] Los perfiles `PERFIL_DESARROLLADOR` y `PERFIL_READONLY` existen en `DBA_PROFILES` con los límites correctos
@@ -1301,7 +1305,7 @@ APP_ERP     EXPIRED & LOCKED                       15-JAN-2024
 - [ ] `UNIFIED_AUDIT_TRAIL` contiene registros de las operaciones realizadas durante la práctica
 - [ ] `APP_ERP` está en estado `EXPIRED & LOCKED` después del paso 7
 
-##REM Procedimiento de Prueba
+## Procedimiento de Prueba
 
 1. Verifica el estado completo del entorno de seguridad:
 
@@ -1366,9 +1370,9 @@ APP_ERP     EXPIRED & LOCKED                       15-JAN-2024
 
 ---
 
-#REM Solución de Problemas
+# Solución de Problemas
 
-##REM Problema 1: ORA-01031 al Intentar Crear Objetos con un Usuario Nuevo
+## Problema 1: ORA-01031 al Intentar Crear Objetos con un Usuario Nuevo
 
 **Síntomas:**
 - El usuario puede conectarse (`CREATE SESSION` funciona)
@@ -1399,7 +1403,7 @@ GRANT UNLIMITED TABLESPACE TO nombre_usuario;
 
 ---
 
-##REM Problema 2: ORA-28000 — La Cuenta Está Bloqueada
+## Problema 2: ORA-28000 — La Cuenta Está Bloqueada
 
 **Síntomas:**
 - Al intentar conectarse aparece `ORA-28000: the account is locked`
@@ -1435,7 +1439,7 @@ ALTER USER nombre_usuario IDENTIFIED BY "NuevaContrasena#2024" ACCOUNT UNLOCK;
 
 ---
 
-##REM Problema 3: Los Eventos No Aparecen en UNIFIED_AUDIT_TRAIL
+## Problema 3: Los Eventos No Aparecen en UNIFIED_AUDIT_TRAIL
 
 **Síntomas:**
 - Las políticas de auditoría están habilitadas en `AUDIT_UNIFIED_ENABLED_POLICIES`
@@ -1472,7 +1476,7 @@ WHERE  policy_name LIKE 'POL_AUDIT%';
 
 ---
 
-##REM Problema 4: ORA-00959 — Tablespace No Existe al Crear Usuario
+## Problema 4: ORA-00959 — Tablespace No Existe al Crear Usuario
 
 **Síntomas:**
 - Al ejecutar `CREATE USER` aparece `ORA-00959: tablespace 'PRACTICE_TS' does not exist`
@@ -1484,7 +1488,7 @@ El tablespace fue creado en un contenedor diferente (CDB root en lugar de la PDB
 **Solución:**
 
 ```cmd
-REM Verificar el contenedor actual desde SQL*Plus
+ Verificar el contenedor actual desde SQL*Plus
 ```
 
 ```sql
@@ -1508,7 +1512,7 @@ CREATE TABLESPACE practice_ts
 
 ---
 
-##REM Problema 5: ORA-02149 — Tablespace Especificado No Disponible para Cuota
+## Problema 5: ORA-02149 — Tablespace Especificado No Disponible para Cuota
 
 **Síntomas:**
 - Al ejecutar `ALTER USER ... QUOTA ... ON tablespace_name` aparece error
@@ -1544,7 +1548,7 @@ WHERE  username = 'NOMBRE_USUARIO';
 
 ---
 
-#REM Limpieza
+# Limpieza
 
 Ejecuta los siguientes comandos para eliminar todos los objetos creados durante esta práctica. Realiza la limpieza al finalizar la sesión o cuando necesites liberar espacio.
 
@@ -1615,7 +1619,7 @@ TABLESPACES_RESTANTES
 ```
 
 ```cmd
-REM Limpiar archivos de trabajo del laboratorio
+ Limpiar archivos de trabajo del laboratorio
 rmdir /s /q C:\lab03
 ```
 
@@ -1627,9 +1631,9 @@ rmdir /s /q C:\lab03
 
 ---
 
-#REM Resumen
+# Resumen
 
-##REM Lo que Lograste
+## Lo que Lograste
 
 - **Creaste un tablespace dedicado** `PRACTICE_TS` para aislar los objetos de práctica, siguiendo las mejores prácticas de administración Oracle
 - **Definiste perfiles de usuario** (`PERFIL_DESARROLLADOR`, `PERFIL_READONLY`) con políticas de contraseña diferenciadas (intentos fallidos, tiempo de vida, reutilización) y límites de recursos de sesión
@@ -1641,7 +1645,7 @@ rmdir /s /q C:\lab03
 - **Configuraste Oracle Unified Auditing** con tres políticas diferenciadas (DML sobre tabla sensible, DDL de desarrolladores, intentos de login fallidos) y verificaste los registros en `UNIFIED_AUDIT_TRAIL`
 - **Consultaste el diccionario de datos** usando `DBA_USERS`, `DBA_SYS_PRIVS`, `DBA_TAB_PRIVS`, `DBA_ROLES`, `DBA_ROLE_PRIVS`, `DBA_PROFILES`, `DBA_TS_QUOTAS` y `UNIFIED_AUDIT_TRAIL`
 
-##REM Conceptos Clave Aprendidos
+## Conceptos Clave Aprendidos
 
 - **Separación de autenticación y autorización:** Crear un usuario solo permite la autenticación. Los privilegios (autorización) deben otorgarse explícitamente; Oracle no asume ningún acceso por defecto
 - **Cuota vs. Tablespace por defecto:** Asignar un tablespace por defecto a un usuario NO otorga cuota automáticamente. Son dos operaciones independientes que deben realizarse por separado
@@ -1650,7 +1654,7 @@ rmdir /s /q C:\lab03
 - **Unified Auditing como herramienta de trazabilidad:** Las políticas de auditoría permiten registrar operaciones específicas de forma granular, esencial para cumplimiento normativo (SOX, PCI-DSS, ISO 27001)
 - **Irreversibilidad de DROP CASCADE:** Las operaciones de eliminación con `CASCADE` son permanentes; el ciclo de vida de los usuarios debe gestionarse con precaución en producción
 
-##REM Próximos Pasos
+## Próximos Pasos
 
 - **Lección 3.2 — Privilegios de Sistema y de Objeto:** Profundizar en la jerarquía completa de privilegios Oracle, `GRANT WITH ADMIN OPTION`, `GRANT WITH GRANT OPTION` y las implicaciones de seguridad de cada uno
 - **Lección 3.3 — Roles Avanzados:** Explorar los roles predefinidos de Oracle (`DBA`, `CONNECT`, `RESOURCE`), roles seguros con contraseña y roles de aplicación
@@ -1659,7 +1663,7 @@ rmdir /s /q C:\lab03
 
 ---
 
-#REM Recursos Adicionales
+# Recursos Adicionales
 
 - **Oracle Database 19c Security Guide** — Documentación oficial completa sobre gestión de usuarios, privilegios, roles, perfiles y auditoría. Disponible en: [https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/](https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/)
 - **Oracle Database SQL Language Reference 19c** — Referencia completa de la sintaxis de `CREATE USER`, `ALTER USER`, `DROP USER`, `GRANT`, `REVOKE`, `CREATE ROLE`, `CREATE PROFILE` y `CREATE AUDIT POLICY`. Disponible en: [https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/)
