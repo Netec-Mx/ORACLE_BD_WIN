@@ -90,7 +90,7 @@ O llamar al script `ambiente.bat` que se creo en la practica 1.
 Verificar que la instancia esté activa
 
 sqlplus / as sysdba
-SELECT instance_name, status, open_mode FROM v$instance;
+SELECT instance_name, status FROM v$instance;
 EXIT;
 
 ```
@@ -98,29 +98,10 @@ EXIT;
 **Salida esperada de verificación:**
 
 ```
-INSTANCE_NAME    STATUS       OPEN_MODE
----------------- ------------ --------------------
-orcl             OPEN         READ WRITE
+INSTANCE_NAME    STATUS       
+---------------- ------------ 
+orcl             OPEN         
 ```
-
-```cmd
- Verificar que la PDB esté abierta
-sqlplus -S / as sysdba <<EOF
-SELECT name, open_mode FROM v$pdbs;
-EXIT;
-EOF
-```
-
-**Salida esperada:**
-
-```
-NAME                           OPEN_MODE
------------------------------- ----------
-PDB$SEED                       READ ONLY
-ORCLPDB1                       READ WRITE
-```
-
-> **Nota:** Si `ORCLPDB1` aparece en modo `MOUNTED`, ejecuta: `ALTER PLUGGABLE DATABASE ORCLPDB1 OPEN;`
 
 ```cmd
  Crear directorio de trabajo para los scripts de esta práctica
@@ -144,18 +125,9 @@ cd C:\lab03
    sqlplus / as sysdba
    ```
 
-2. Dentro de SQL*Plus, abre la PDB y crea el tablespace de práctica:
-
-   ```sql
-   -- Cambiar al contenedor PDB
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
-
-   -- Verificar el contenedor actual
-   SELECT SYS_CONTEXT('USERENV', 'CON_NAME') AS contenedor_actual FROM DUAL;
-
    -- Crear tablespace dedicado para la práctica
    CREATE TABLESPACE practice_ts
-       DATAFILE 'C:\app\oracle\oradata\ORCL\ORCLPDB1\practice_ts01.dbf'
+       DATAFILE 'C:\app\oracle\oradata\ORCL\practice_ts01.dbf'
        SIZE 100M
        AUTOEXTEND ON NEXT 10M MAXSIZE 500M
        EXTENT MANAGEMENT LOCAL
@@ -194,10 +166,6 @@ cd C:\lab03
 **Salida Esperada:**
 
 ```
-CONTENEDOR_ACTUAL
------------------
-ORCLPDB1
-
 TABLESPACE_NAME   STATUS    BLOCK_SIZE EXTENT_MAN
 ----------------- --------- ---------- ----------
 PRACTICE_TS       ONLINE          8192 LOCAL
