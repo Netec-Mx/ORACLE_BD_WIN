@@ -1,4 +1,4 @@
-# Práctica 5. Movimiento de Datos en Oracle 19c
+REM Práctica 5. Movimiento de Datos en Oracle 19c
 
 
 ## Metadatos
@@ -44,7 +44,7 @@ Al completar este laboratorio, serás capaz de:
 
 ### Acceso Requerido
 
-- Acceso SSH a la máquina virtual Oracle Linux 8.x con Oracle Database 19c instalado
+- Acceso SSH a la máquina virtual Windows 8.x con Oracle Database 19c instalado
 - Usuario del sistema operativo: `oracle` con acceso al entorno de Oracle (`ORACLE_HOME`, `ORACLE_SID`)
 - Acceso a SQL*Plus como `SYSTEM` o `SYS AS SYSDBA` con contraseña conocida
 - Privilegios `DATAPUMP_EXP_FULL_DATABASE` y `DATAPUMP_IMP_FULL_DATABASE` para el usuario administrador
@@ -71,44 +71,45 @@ Al completar este laboratorio, serás capaz de:
 | SQL*Plus | Incluido con Oracle 19c | Administración y ejecución de scripts |
 | Oracle Data Pump (`expdp`/`impdp`) | Incluido con Oracle 19c | Exportación e importación de datos |
 | SQL*Loader (`sqlldr`) | Incluido con Oracle 19c | Carga masiva desde archivos planos |
-| Oracle Linux | 8.x (8.7 o 8.8) | Sistema operativo del entorno de práctica |
-| PuTTY / Terminal SSH | PuTTY 0.79+ / Terminal nativo | Acceso remoto a la VM Linux |
+| Windows | 8.x (8.7 o 8.8) | Sistema operativo del entorno de práctica |
+| CMD / PowerShell | PuTTY 0.79+ / Terminal nativo | Acceso remoto a la VM Linux |
 
 ### Configuración Inicial
 
 Antes de iniciar el laboratorio, verificar que el entorno Oracle esté correctamente configurado:
 
-```bash
-# Conectarse a la VM Oracle Linux como usuario oracle
-ssh oracle@192.168.1.100
+```cmd
+REM Conectarse a la VM Windows como usuario oracle
+REM Acceso SSH no requerido en Windows
+REM 192.168.1.100
 
-# Verificar variables de entorno Oracle
+REM Verificar variables de entorno Oracle
 echo $ORACLE_HOME
 echo $ORACLE_SID
 echo $PATH
 
-# Si las variables no están configuradas, cargarlas manualmente
+REM Si las variables no están configuradas, cargarlas manualmente
 source ~/.bash_profile
 
-# Verificar que la base de datos esté activa
+REM Verificar que la base de datos esté activa
 sqlplus -S / as sysdba <<EOF
 SELECT instance_name, status FROM v\$instance;
 EXIT;
 EOF
 ```
 
-```bash
-# Crear los directorios del sistema operativo que usaremos en este laboratorio
-mkdir -p /u01/oracle/datapump
-mkdir -p /u01/oracle/sqlldr
-mkdir -p /u01/oracle/external
+```cmd
+REM Crear los directorios del sistema operativo que usaremos en este laboratorio
+mkdir /u01/oracle/datapump
+mkdir /u01/oracle/sqlldr
+mkdir /u01/oracle/external
 
-# Asignar permisos correctos al usuario oracle
+REM Asignar permisos correctos al usuario oracle
 chmod 755 /u01/oracle/datapump
 chmod 755 /u01/oracle/sqlldr
 chmod 755 /u01/oracle/external
 
-# Verificar que los directorios existen y tienen los permisos correctos
+REM Verificar que los directorios existen y tienen los permisos correctos
 ls -la /u01/oracle/
 ```
 
@@ -124,7 +125,7 @@ ls -la /u01/oracle/
 
 1. Conectarse a SQL*Plus como administrador:
 
-   ```bash
+   ```cmd
    sqlplus system/Oracle123@localhost:1521/ORCLPDB1
    ```
 
@@ -290,7 +291,7 @@ Debe mostrar al menos las tablas `DEPARTMENTS` y `EMPLOYEES` con status `VALID`.
 
 4. Verificar desde el sistema operativo que los directorios físicos existen y tienen los permisos correctos:
 
-   ```bash
+   ```cmd
    # Salir de SQL*Plus y verificar en el SO
    ls -la /u01/oracle/datapump
    ls -la /u01/oracle/sqlldr
@@ -332,7 +333,7 @@ SQLLDR_DIR        /u01/oracle/sqlldr
 
 1. Desde la terminal Linux (como usuario `oracle`), ejecutar la exportación completa del esquema HR:
 
-   ```bash
+   ```cmd
    expdp system/Oracle123@localhost:1521/ORCLPDB1 \
      SCHEMAS=HR \
      DIRECTORY=dp_dir \
@@ -345,19 +346,19 @@ SQLLDR_DIR        /u01/oracle/sqlldr
 
 3. Verificar que el archivo dump y el log fueron creados correctamente:
 
-   ```bash
+   ```cmd
    ls -lh /u01/oracle/datapump/
    ```
 
 4. Revisar el contenido del log de exportación:
 
-   ```bash
+   ```cmd
    cat /u01/oracle/datapump/hr_full_export.log
    ```
 
 5. Ahora ejecutar una exportación solo de metadatos (sin datos), útil para copiar la estructura a ambientes de desarrollo:
 
-   ```bash
+   ```cmd
    expdp system/Oracle123@localhost:1521/ORCLPDB1 \
      SCHEMAS=HR \
      DIRECTORY=dp_dir \
@@ -369,14 +370,14 @@ SQLLDR_DIR        /u01/oracle/sqlldr
 
 6. Comparar el tamaño de ambos archivos dump:
 
-   ```bash
+   ```cmd
    ls -lh /u01/oracle/datapump/hr_full_export.dmp
    ls -lh /u01/oracle/datapump/hr_metadata_only.dmp
    ```
 
 7. Ejecutar una exportación excluyendo índices para demostrar el uso del parámetro `EXCLUDE`:
 
-   ```bash
+   ```cmd
    expdp system/Oracle123@localhost:1521/ORCLPDB1 \
      SCHEMAS=HR \
      DIRECTORY=dp_dir \
@@ -413,15 +414,15 @@ Job "SYSTEM"."EXPORT_HR_FULL" successfully completed at [hora]
 
 **Verificación:**
 
-```bash
-# Verificar que los tres archivos dump existen
+```cmd
+REM Verificar que los tres archivos dump existen
 ls -lh /u01/oracle/datapump/*.dmp
 
-# El archivo con datos debe ser mayor que el de solo metadatos
-# Ejemplo esperado:
-# hr_full_export.dmp     ~  200 KB  (con datos)
-# hr_metadata_only.dmp   ~   80 KB  (sin datos)
-# hr_noindex.dmp         ~  180 KB  (sin índices)
+REM El archivo con datos debe ser mayor que el de solo metadatos
+REM Ejemplo esperado:
+REM hr_full_export.dmp     ~  200 KB  (con datos)
+REM hr_metadata_only.dmp   ~   80 KB  (sin datos)
+REM hr_noindex.dmp         ~  180 KB  (sin índices)
 ```
 
 ---
@@ -445,7 +446,7 @@ ls -lh /u01/oracle/datapump/*.dmp
 
 2. Ejecutar la importación con remapeo de esquema:
 
-   ```bash
+   ```cmd
    impdp system/Oracle123@localhost:1521/ORCLPDB1 \
      DIRECTORY=dp_dir \
      DUMPFILE=hr_full_export.dmp \
@@ -456,7 +457,7 @@ ls -lh /u01/oracle/datapump/*.dmp
 
 3. Revisar el log de importación para verificar que no hubo errores:
 
-   ```bash
+   ```cmd
    cat /u01/oracle/datapump/hr_import_remap.log
    ```
 
@@ -495,7 +496,7 @@ ls -lh /u01/oracle/datapump/*.dmp
    EOF
    ```
 
-   ```bash
+   ```cmd
    impdp system/Oracle123@localhost:1521/ORCLPDB1 \
      DIRECTORY=dp_dir \
      DUMPFILE=hr_metadata_only.dmp \
@@ -551,7 +552,7 @@ Ambos esquemas deben mostrar el mismo número de empleados (5 filas).
 
 1. Lanzar una exportación en segundo plano para poder monitorearla (usar `nohup` o simplemente observar mientras ejecuta):
 
-   ```bash
+   ```cmd
    # Exportar con múltiples archivos para simular una operación más larga
    expdp system/Oracle123@localhost:1521/ORCLPDB1 \
      SCHEMAS=HR \
@@ -600,7 +601,7 @@ Ambos esquemas deben mostrar el mismo número de empleados (5 filas).
 
 4. Demostrar cómo adjuntarse a un trabajo activo (si el trabajo anterior ya terminó, relanzarlo):
 
-   ```bash
+   ```cmd
    # Si el trabajo anterior ya terminó, lanzar uno nuevo
    expdp system/Oracle123@localhost:1521/ORCLPDB1 \
      SCHEMAS=HR \
@@ -669,7 +670,7 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
 
 2. Crear el archivo CSV de datos de prueba:
 
-   ```bash
+   ```cmd
    cat > /u01/oracle/sqlldr/empleados_datos.csv << 'EOF'
    201,Juan,García,jgarcia@empresa.com,15-01-2020,35000.50,Tecnología,S
    202,María,López,mlopez@empresa.com,20-03-2019,42000.00,Finanzas,S
@@ -686,7 +687,7 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
 
 3. Crear el archivo de control SQL*Loader (`.ctl`):
 
-   ```bash
+   ```cmd
    cat > /u01/oracle/sqlldr/empleados_carga.ctl << 'EOF'
    -- Archivo de control SQL*Loader para cargar empleados desde CSV
    -- Tabla destino: PRACTICA_USER.EMPLEADOS_CARGA
@@ -714,7 +715,7 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
 
 4. Crear también un archivo CSV con algunos registros intencionalmente incorrectos para demostrar el manejo de errores:
 
-   ```bash
+   ```cmd
    cat > /u01/oracle/sqlldr/empleados_errores.csv << 'EOF'
    211,Roberto,Castro,rcastro@empresa.com,15-01-2023,32000.00,Tecnología,S
    212,REGISTRO_INVALIDO,,email_invalido,fecha_mala,NO_ES_NUMERO,Ventas,X
@@ -722,7 +723,7 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
    EOF
    ```
 
-   ```bash
+   ```cmd
    cat > /u01/oracle/sqlldr/empleados_errores.ctl << 'EOF'
    LOAD DATA
    INFILE '/u01/oracle/sqlldr/empleados_errores.csv'
@@ -751,24 +752,24 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
 Table created.
 ```
 
-```bash
-# Verificar los archivos creados
+```cmd
+REM Verificar los archivos creados
 ls -la /u01/oracle/sqlldr/
-# Debe mostrar:
-# empleados_datos.csv
-# empleados_carga.ctl
-# empleados_errores.csv
-# empleados_errores.ctl
+REM Debe mostrar:
+REM empleados_datos.csv
+REM empleados_carga.ctl
+REM empleados_errores.csv
+REM empleados_errores.ctl
 ```
 
 **Verificación:**
 
-```bash
-# Verificar contenido del archivo CSV
+```cmd
+REM Verificar contenido del archivo CSV
 wc -l /u01/oracle/sqlldr/empleados_datos.csv
-# Debe mostrar: 10 /u01/oracle/sqlldr/empleados_datos.csv
+REM Debe mostrar: 10 /u01/oracle/sqlldr/empleados_datos.csv
 
-# Verificar contenido del archivo de control
+REM Verificar contenido del archivo de control
 cat /u01/oracle/sqlldr/empleados_carga.ctl
 ```
 
@@ -782,7 +783,7 @@ cat /u01/oracle/sqlldr/empleados_carga.ctl
 
 1. Ejecutar SQL*Loader con el archivo de control principal:
 
-   ```bash
+   ```cmd
    sqlldr userid=practica_user/Oracle123@localhost:1521/ORCLPDB1 \
      control=/u01/oracle/sqlldr/empleados_carga.ctl \
      log=/u01/oracle/sqlldr/empleados_carga_sqlldr.log
@@ -790,7 +791,7 @@ cat /u01/oracle/sqlldr/empleados_carga.ctl
 
 2. Revisar el log file generado por SQL*Loader:
 
-   ```bash
+   ```cmd
    cat /u01/oracle/sqlldr/empleados_carga_sqlldr.log
    ```
 
@@ -808,7 +809,7 @@ cat /u01/oracle/sqlldr/empleados_carga.ctl
 
 4. Ahora ejecutar SQL*Loader con el archivo que contiene errores para ver el manejo de bad records:
 
-   ```bash
+   ```cmd
    sqlldr userid=practica_user/Oracle123@localhost:1521/ORCLPDB1 \
      control=/u01/oracle/sqlldr/empleados_errores.ctl \
      log=/u01/oracle/sqlldr/empleados_errores_sqlldr.log
@@ -816,13 +817,13 @@ cat /u01/oracle/sqlldr/empleados_carga.ctl
 
 5. Revisar el log del proceso con errores:
 
-   ```bash
+   ```cmd
    cat /u01/oracle/sqlldr/empleados_errores_sqlldr.log
    ```
 
 6. Verificar el archivo BAD que contiene los registros rechazados:
 
-   ```bash
+   ```cmd
    # Verificar si el archivo BAD fue creado (solo si hubo errores)
    ls -la /u01/oracle/sqlldr/*.bad 2>/dev/null || echo "No se generaron archivos BAD"
    cat /u01/oracle/sqlldr/empleados_errores.bad 2>/dev/null
@@ -875,12 +876,12 @@ EMP_ID NOMBRE    APELLIDO   SALARIO    DEPARTAMENTO
 
 **Verificación:**
 
-```bash
-# El log file debe indicar:
+```cmd
+REM El log file debe indicar:
 grep "Rows successfully loaded" /u01/oracle/sqlldr/empleados_carga_sqlldr.log
-# Debe mostrar: 10 Rows successfully loaded.
+REM Debe mostrar: 10 Rows successfully loaded.
 
-# Para el archivo con errores:
+REM Para el archivo con errores:
 grep "Rows successfully loaded\|Rows not loaded" /u01/oracle/sqlldr/empleados_errores_sqlldr.log
 ```
 
@@ -894,7 +895,7 @@ grep "Rows successfully loaded\|Rows not loaded" /u01/oracle/sqlldr/empleados_er
 
 1. Crear el archivo de datos que será leído por la tabla externa:
 
-   ```bash
+   ```cmd
    cat > /u01/oracle/external/productos_ext.csv << 'EOF'
    1001,Laptop Pro 15,Electrónica,85000.00,150,2024-01-15
    1002,Mouse Inalámbrico,Periféricos,450.50,500,2024-01-20
@@ -911,7 +912,7 @@ grep "Rows successfully loaded\|Rows not loaded" /u01/oracle/sqlldr/empleados_er
 
 2. Verificar que el archivo tiene los permisos correctos para que Oracle pueda leerlo:
 
-   ```bash
+   ```cmd
    chmod 644 /u01/oracle/external/productos_ext.csv
    ls -la /u01/oracle/external/
    ```
@@ -1108,7 +1109,7 @@ FROM user_external_tables;
 
 3. Verificar los archivos generados durante el laboratorio:
 
-   ```bash
+   ```cmd
    echo "=== Archivos Data Pump ==="
    ls -lh /u01/oracle/datapump/*.dmp 2>/dev/null
    ls -lh /u01/oracle/datapump/*.log 2>/dev/null
@@ -1183,7 +1184,7 @@ PRODUCTOS_EXTERNOS (tabla externa - sin carga física)       10
 
 1. Verificar la exportación completa:
 
-   ```bash
+   ```cmd
    # El archivo dump debe existir y tener tamaño mayor a 0
    test -f /u01/oracle/datapump/hr_full_export.dmp && \
      echo "PASS: Archivo dump existe" || echo "FAIL: Archivo dump no encontrado"
@@ -1195,7 +1196,7 @@ PRODUCTOS_EXTERNOS (tabla externa - sin carga física)       10
 
 2. Verificar la importación con remapeo:
 
-   ```bash
+   ```cmd
    sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
    SELECT COUNT(*) AS tablas_importadas
    FROM dba_tables
@@ -1207,7 +1208,7 @@ PRODUCTOS_EXTERNOS (tabla externa - sin carga física)       10
 
 3. Verificar la carga con SQL*Loader:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123@localhost:1521/ORCLPDB1 <<EOF
    SELECT COUNT(*) FROM empleados_carga;
    EXIT;
@@ -1217,7 +1218,7 @@ PRODUCTOS_EXTERNOS (tabla externa - sin carga física)       10
 
 4. Verificar la tabla externa:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123@localhost:1521/ORCLPDB1 <<EOF
    SELECT COUNT(*) FROM productos_externos;
    EXIT;
@@ -1227,7 +1228,7 @@ PRODUCTOS_EXTERNOS (tabla externa - sin carga física)       10
 
 5. Verificar que la tabla externa no tiene segmentos físicos:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123@localhost:1521/ORCLPDB1 <<EOF
    SELECT COUNT(*) AS segmentos_fisicos
    FROM user_segments
@@ -1257,23 +1258,23 @@ El directorio físico del sistema operativo no existe, no tiene los permisos cor
 
 **Solución:**
 
-```bash
-# Verificar que el directorio existe
+```cmd
+REM Verificar que el directorio existe
 ls -la /u01/oracle/datapump
 
-# Si no existe, crearlo
-mkdir -p /u01/oracle/datapump
+REM Si no existe, crearlo
+mkdir /u01/oracle/datapump
 
-# Asignar permisos correctos (propietario oracle, grupo dba)
+REM Asignar permisos correctos (propietario oracle, grupo dba)
 chown oracle:dba /u01/oracle/datapump
 chmod 755 /u01/oracle/datapump
 
-# Verificar que el objeto DIRECTORY Oracle apunta a la ruta correcta
+REM Verificar que el objeto DIRECTORY Oracle apunta a la ruta correcta
 sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 SELECT directory_name, directory_path FROM dba_directories WHERE directory_name = 'DP_DIR';
 EOF
 
-# Si la ruta es incorrecta, recrear el directorio
+REM Si la ruta es incorrecta, recrear el directorio
 sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 CREATE OR REPLACE DIRECTORY dp_dir AS '/u01/oracle/datapump';
 EOF
@@ -1331,24 +1332,24 @@ El archivo de datos no existe en la ruta especificada en el archivo de control, 
 
 **Solución:**
 
-```bash
-# Verificar que el archivo de datos existe y tiene contenido
+```cmd
+REM Verificar que el archivo de datos existe y tiene contenido
 ls -la /u01/oracle/sqlldr/empleados_datos.csv
 wc -l /u01/oracle/sqlldr/empleados_datos.csv
 
-# Verificar que el archivo tiene permisos de lectura
+REM Verificar que el archivo tiene permisos de lectura
 chmod 644 /u01/oracle/sqlldr/empleados_datos.csv
 
-# Revisar el archivo de control para detectar errores de sintaxis
+REM Revisar el archivo de control para detectar errores de sintaxis
 cat /u01/oracle/sqlldr/empleados_carga.ctl
 
-# Si hay registros en el archivo BAD, revisar el motivo del rechazo
+REM Si hay registros en el archivo BAD, revisar el motivo del rechazo
 cat /u01/oracle/sqlldr/empleados_carga.bad
 
-# Revisar el log de SQL*Loader para el mensaje de error detallado
+REM Revisar el log de SQL*Loader para el mensaje de error detallado
 cat /u01/oracle/sqlldr/empleados_carga_sqlldr.log | grep -A5 "error\|Error\|ERROR"
 
-# Ejecutar SQL*Loader con el parámetro ERRORS=999 para ver todos los errores
+REM Ejecutar SQL*Loader con el parámetro ERRORS=999 para ver todos los errores
 sqlldr userid=practica_user/Oracle123@localhost:1521/ORCLPDB1 \
   control=/u01/oracle/sqlldr/empleados_carga.ctl \
   log=/u01/oracle/sqlldr/debug_load.log \
@@ -1372,27 +1373,27 @@ El archivo CSV referenciado en la tabla externa no existe en el directorio físi
 
 **Solución:**
 
-```bash
-# Verificar que el archivo existe en el directorio correcto
+```cmd
+REM Verificar que el archivo existe en el directorio correcto
 ls -la /u01/oracle/external/
 
-# Si el archivo no existe, crearlo nuevamente
+REM Si el archivo no existe, crearlo nuevamente
 cat > /u01/oracle/external/productos_ext.csv << 'EOF'
 1001,Laptop Pro 15,Electrónica,85000.00,150,2024-01-15
 1002,Mouse Inalámbrico,Periféricos,450.50,500,2024-01-20
 EOF
 
-# Verificar permisos del archivo (debe ser legible por el usuario oracle)
+REM Verificar permisos del archivo (debe ser legible por el usuario oracle)
 chmod 644 /u01/oracle/external/productos_ext.csv
 
-# Verificar que el objeto DIRECTORY apunta al directorio correcto
+REM Verificar que el objeto DIRECTORY apunta al directorio correcto
 sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 SELECT directory_name, directory_path
 FROM dba_directories
 WHERE directory_name = 'EXT_DIR';
 EOF
 
-# Verificar el nombre exacto del archivo en la tabla externa
+REM Verificar el nombre exacto del archivo en la tabla externa
 sqlplus practica_user/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 SELECT table_name, location FROM user_external_locations;
 EOF
@@ -1425,7 +1426,7 @@ EOF
 -- Valores posibles: SKIP (ignorar), APPEND (agregar datos), TRUNCATE (truncar y cargar), REPLACE (recrear)
 ```
 
-```bash
+```cmd
 impdp system/Oracle123@localhost:1521/ORCLPDB1 \
   DIRECTORY=dp_dir \
   DUMPFILE=hr_full_export.dmp \
@@ -1463,25 +1464,25 @@ DROP TABLE practica_user.productos_externos;
 EXIT;
 ```
 
-```bash
-# Limpiar archivos temporales del sistema operativo
-# PRECAUCIÓN: Conservar los dump files si se necesitan para prácticas posteriores
+```cmd
+REM Limpiar archivos temporales del sistema operativo
+REM PRECAUCIÓN: Conservar los dump files si se necesitan para prácticas posteriores
 
-# Limpiar solo los archivos de log de SQL*Loader y archivos BAD
+REM Limpiar solo los archivos de log de SQL*Loader y archivos BAD
 rm -f /u01/oracle/sqlldr/*.log
 rm -f /u01/oracle/sqlldr/*.bad
 rm -f /u01/oracle/sqlldr/*.dsc
 
-# Limpiar los archivos de datos CSV de SQL*Loader (se pueden regenerar)
+REM Limpiar los archivos de datos CSV de SQL*Loader (se pueden regenerar)
 rm -f /u01/oracle/sqlldr/*.csv
 rm -f /u01/oracle/sqlldr/*.ctl
 
-# Conservar los dump files de Data Pump para referencia
-# Si se desea liberar espacio, ejecutar:
-# rm -f /u01/oracle/datapump/*.dmp
-# rm -f /u01/oracle/datapump/*.log
+REM Conservar los dump files de Data Pump para referencia
+REM Si se desea liberar espacio, ejecutar:
+REM rm -f /u01/oracle/datapump/*.dmp
+REM rm -f /u01/oracle/datapump/*.log
 
-# Verificar el espacio liberado
+REM Verificar el espacio liberado
 df -h /u01/
 ```
 
