@@ -401,7 +401,7 @@ RPT_MARIA   PRACTICE_TS              0 0 MB
 **Verificación:**
 
 - Los tres usuarios deben aparecer con `ACCOUNT_STATUS = OPEN`
-- `RPT_MARIA` tiene cuota `0 MB` (no puede crear objetos directamente)
+- `RPT_MARIA` tiene cuota `0 MB` (no puede crear objetos directamente, no es listada en el reporte)
 - `APP_ERP` tiene cuota `UNLIMITED`
 
 ---
@@ -470,13 +470,14 @@ RPT_MARIA   PRACTICE_TS              0 0 MB
 4. Prueba que los usuarios pueden conectarse con sus nuevos privilegios:
 
    ```cmd
-    Abrir una segunda terminal SSH para probar conectividad
+    Abrir una segunda terminal SSH o CMD para probar conectividad
     (ejecutar desde el shell de Windows, NO desde SQL*Plus)
    ```
 
    ```sql
    -- Desde SQL*Plus actual, probar conexión como dev_juan
-   CONNECT dev_juan/"DevJuan#2024"@ORCLPDB1
+   CONNECT dev_juan/"DevJuan#2024"@ORCL
+   show user;
 
    -- Verificar sesión activa
    SELECT USER AS usuario_actual,
@@ -494,11 +495,10 @@ RPT_MARIA   PRACTICE_TS              0 0 MB
    SELECT table_name FROM user_tables WHERE table_name = 'TEST_DEV';
 
    -- Volver a conectarse como SYSTEM para continuar
-   CONNECT system/"Oracle123"@ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   CONNECT system/"oracle_4U"@ORCL
    ```
 
-**Salida Esperada:**
+**Salida Esperada de los comandos anteriores:**
 
 ```
 GRANTEE     PRIVILEGE                ADMIN_OPTION
@@ -546,8 +546,8 @@ TEST_DEV
 1. Otorga privilegios de objeto diferenciados por usuario:
 
    ```sql
-   -- Asegurarse de estar en ORCLPDB1 como SYSTEM o SYS
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   -- Asegurarse de estar en ORCL como SYSTEM o SYS
+   show user;
 
    -- dev_juan puede leer y modificar datos de empleados
    GRANT SELECT, INSERT, UPDATE ON system.empleados_sensibles TO dev_juan;
@@ -575,7 +575,7 @@ TEST_DEV
 
    ```sql
    -- Conectarse como rpt_maria para probar
-   CONNECT rpt_maria/"RptMaria#2024"@ORCLPDB1
+   CONNECT rpt_maria/"RptMaria#2024"@ORCL
 
    -- Esta consulta DEBE funcionar (tiene SELECT)
    SELECT emp_id, nombre, departamento
