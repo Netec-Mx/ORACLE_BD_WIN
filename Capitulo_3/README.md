@@ -589,8 +589,7 @@ TEST_DEV
 
    ```sql
    -- Volver como SYSTEM
-   CONNECT system/"oracle_4U"@ORCL
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT / as sysdba
 
    -- Revocar privilegio UPDATE de dev_juan (ya no necesita modificar salarios)
    REVOKE UPDATE ON system.empleados_sensibles FROM dev_juan;
@@ -610,11 +609,10 @@ TEST_DEV
    WHERE  emp_id = 1;
 
    -- Volver como SYSTEM
-   CONNECT system/"Oracle_4U"@ORCL
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/"oracle_4U"@ORCL
    ```
 
-**Salida Esperada:**
+**Salida Esperada de los comandos anteriores:**
 
 ```
 GRANTEE     OWNER   TABLE_NAME            PRIVILEGE  GRANTABLE
@@ -662,7 +660,7 @@ ORA-01031: insufficient privileges
 
    ```sql
    -- Asegurarse de estar en ORCL como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCL;
+   show user;
 
    -- Crear rol de solo lectura
    CREATE ROLE rol_readonly;
@@ -779,11 +777,10 @@ ORA-01031: insufficient privileges
    FROM   system.empleados_sensibles;
 
    -- Volver como SYSTEM
-   CONNECT system/"Oracle_4U"@ORCL
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/"oracle_4U"@ORCL
    ```
 
-**Salida Esperada:**
+**Salida Esperada de los comandos anteriores:**
 
 ```
 ROLE            PASSWORD_REQUIRED AUTHENTICATION_TYPE
@@ -833,7 +830,8 @@ TOTAL_EMPLEADOS
 
    ```sql
    -- Asegurarse de estar en ORCL como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/oracle_4U;
+   show user;
 
    -- Escenario: mantenimiento programado - bloquear cuenta de aplicación
    ALTER USER app_erp ACCOUNT LOCK;
@@ -853,8 +851,7 @@ TOTAL_EMPLEADOS
 
    ```sql
    -- Volver como SYSTEM (si la conexión anterior falló, ya estamos como SYSTEM)
-   CONNECT system/"Oracle_4U"@ORCL
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/"oracle_4U"@ORCL
 
    -- Fin del mantenimiento - reactivar y forzar cambio de contraseña
    ALTER USER app_erp ACCOUNT UNLOCK PASSWORD EXPIRE;
@@ -959,7 +956,7 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
 
    ```sql
    -- Asegurarse de estar en ORCL como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/oracle_4U;
 
    -- Verificar si Unified Auditing está habilitado
    SELECT value
@@ -968,8 +965,8 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
 
    -- Verificar políticas de auditoría existentes
    SELECT policy_name,
-          enabled_opt,
-          user_name,
+          enabled_option,
+          entity_name,
           success,
           failure
    FROM   audit_unified_enabled_policies
@@ -1019,8 +1016,8 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
 
    -- Verificar políticas habilitadas
    SELECT policy_name,
-          enabled_opt,
-          user_name,
+          enabled_option,
+          entity_name,
           success,
           failure
    FROM   audit_unified_enabled_policies
