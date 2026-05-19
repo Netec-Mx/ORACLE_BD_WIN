@@ -1143,7 +1143,8 @@ USUARIO_INEXISTENTE LOGON                   1    1017    1017
 
    ```sql
    -- Asegurarse de estar en ORCL como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/oracle_4U;
+   show user;
 
    -- Reporte completo: usuarios con sus roles y privilegios directos
    SELECT u.username,
@@ -1274,7 +1275,8 @@ APP_ERP     EXPIRED & LOCKED                       15-JAN-2024
 
    ```sql
    -- Conectarse como SYSTEM a ORCL
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/oracle_4U;
+   show user;
 
    -- Prueba 1: Verificar todos los usuarios de práctica
    SELECT username, account_status, profile
@@ -1303,8 +1305,8 @@ APP_ERP     EXPIRED & LOCKED                       15-JAN-2024
    ```
    ROLE            USUARIOS_CON_ROL
    --------------- ----------------
-   ROL_APP_ADMIN                  1
-   ROL_DEVELOPER                  1
+   ROL_APP_ADMIN                  2
+   ROL_DEVELOPER                  3
    ROL_READONLY                   3
    ```
 
@@ -1517,7 +1519,7 @@ Ejecuta los siguientes comandos para eliminar todos los objetos creados durante 
 
 ```sql
 -- Conectarse como SYSTEM a ORCL
-ALTER SESSION SET CONTAINER = ORCL;
+CONNECT system/oracle_4U;
 
 -- Paso 1: Deshabilitar y eliminar políticas de auditoría
 NOAUDIT POLICY pol_audit_empleados;
@@ -1617,14 +1619,6 @@ rmdir /s /q C:\lab03
 - **Unified Auditing como herramienta de trazabilidad:** Las políticas de auditoría permiten registrar operaciones específicas de forma granular, esencial para cumplimiento normativo (SOX, PCI-DSS, ISO 27001)
 - **Irreversibilidad de DROP CASCADE:** Las operaciones de eliminación con `CASCADE` son permanentes; el ciclo de vida de los usuarios debe gestionarse con precaución en producción
 
-## Próximos Pasos
-
-- **Lección 3.2 — Privilegios de Sistema y de Objeto:** Profundizar en la jerarquía completa de privilegios Oracle, `GRANT WITH ADMIN OPTION`, `GRANT WITH GRANT OPTION` y las implicaciones de seguridad de cada uno
-- **Lección 3.3 — Roles Avanzados:** Explorar los roles predefinidos de Oracle (`DBA`, `CONNECT`, `RESOURCE`), roles seguros con contraseña y roles de aplicación
-- **Lección 3.4 — Auditoría Avanzada:** Configurar políticas de auditoría basadas en condiciones complejas, gestión del ciclo de vida del trail y alertas automáticas con Oracle Audit Vault
-- **Práctica recomendada:** Revisar la documentación oficial de Oracle Database 19c Security Guide, especialmente los capítulos sobre "Configuring Privilege and Role Authorization" y "Monitoring Database Activity with Auditing"
-
----
 
 # Recursos Adicionales
 
