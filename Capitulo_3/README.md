@@ -141,7 +141,7 @@ cd C:\lab03
 3. Crea también una tabla de datos sensibles que usaos para las pruebas de privilegios:
 
    ```sql
-   -- Crear tabla de prueba como SYSTEM en ORCLPDB1
+   -- Crear tabla de prueba como SYSTEM en ORCL
    CREATE TABLE system.empleados_sensibles (
        emp_id      NUMBER PRIMARY KEY,
        nombre      VARCHAR2(100),
@@ -521,7 +521,7 @@ RPT_MARIA   CREATE SESSION           NO
 
 USUARIO_ACTUAL  CONTENEDOR  SESION_USUARIO
 --------------- ----------- ---------------
-DEV_JUAN        ORCLPDB1    DEV_JUAN
+DEV_JUAN        ORCL    DEV_JUAN
 
 TABLE_NAME
 ----------
@@ -589,8 +589,8 @@ TEST_DEV
 
    ```sql
    -- Volver como SYSTEM
-   CONNECT system/"Oracle123"@ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   CONNECT system/"oracle_4U"@ORCL
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Revocar privilegio UPDATE de dev_juan (ya no necesita modificar salarios)
    REVOKE UPDATE ON system.empleados_sensibles FROM dev_juan;
@@ -602,7 +602,7 @@ TEST_DEV
    AND    grantee = 'DEV_JUAN';
 
    -- Confirmar que dev_juan ya no puede hacer UPDATE
-   CONNECT dev_juan/"DevJuan#2024"@ORCLPDB1
+   CONNECT dev_juan/"DevJuan#2024"@ORCL
 
    -- Este UPDATE DEBE FALLAR después de la revocación
    UPDATE system.empleados_sensibles
@@ -610,8 +610,8 @@ TEST_DEV
    WHERE  emp_id = 1;
 
    -- Volver como SYSTEM
-   CONNECT system/"Oracle123"@ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   CONNECT system/"Oracle_4U"@ORCL
+   ALTER SESSION SET CONTAINER = ORCL;
    ```
 
 **Salida Esperada:**
@@ -661,8 +661,8 @@ ORA-01031: insufficient privileges
 1. Crea los roles personalizados:
 
    ```sql
-   -- Asegurarse de estar en ORCLPDB1 como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   -- Asegurarse de estar en ORCL como SYSTEM
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Crear rol de solo lectura
    CREATE ROLE rol_readonly;
@@ -772,15 +772,15 @@ ORA-01031: insufficient privileges
    GRANT rol_readonly TO rpt_pedro;
 
    -- Probar conexión y acceso de rpt_pedro
-   CONNECT rpt_pedro/"RptPedro#2024"@ORCLPDB1
+   CONNECT rpt_pedro/"RptPedro#2024"@ORCL
 
    -- Debe poder hacer SELECT por el rol
    SELECT COUNT(*) AS total_empleados
    FROM   system.empleados_sensibles;
 
    -- Volver como SYSTEM
-   CONNECT system/"Oracle123"@ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   CONNECT system/"Oracle_4U"@ORCL
+   ALTER SESSION SET CONTAINER = ORCL;
    ```
 
 **Salida Esperada:**
@@ -832,8 +832,8 @@ TOTAL_EMPLEADOS
 1. Simula un escenario de mantenimiento bloqueando una cuenta:
 
    ```sql
-   -- Asegurarse de estar en ORCLPDB1 como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   -- Asegurarse de estar en ORCL como SYSTEM
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Escenario: mantenimiento programado - bloquear cuenta de aplicación
    ALTER USER app_erp ACCOUNT LOCK;
@@ -846,15 +846,15 @@ TOTAL_EMPLEADOS
    WHERE  username = 'APP_ERP';
 
    -- Intentar conectarse como app_erp (DEBE FALLAR)
-   CONNECT app_erp/"AppErp#2024"@ORCLPDB1
+   CONNECT app_erp/"AppErp#2024"@ORCL
    ```
 
 2. Desbloquea la cuenta y fuerza cambio de contraseña:
 
    ```sql
    -- Volver como SYSTEM (si la conexión anterior falló, ya estamos como SYSTEM)
-   CONNECT system/"Oracle123"@ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   CONNECT system/"Oracle_4U"@ORCL
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Fin del mantenimiento - reactivar y forzar cambio de contraseña
    ALTER USER app_erp ACCOUNT UNLOCK PASSWORD EXPIRE;
@@ -958,8 +958,8 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
 1. Verifica el estado actual de Unified Auditing:
 
    ```sql
-   -- Asegurarse de estar en ORCLPDB1 como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   -- Asegurarse de estar en ORCL como SYSTEM
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Verificar si Unified Auditing está habilitado
    SELECT value
@@ -1032,7 +1032,7 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
 
    ```sql
    -- Conectarse como dev_juan para generar eventos auditados
-   CONNECT dev_juan/"DevJuan#NewPass2024"@ORCLPDB1
+   CONNECT dev_juan/"DevJuan#NewPass2024"@ORCL
 
    -- Operación SELECT auditada
    SELECT * FROM system.empleados_sensibles WHERE departamento = 'TI';
@@ -1049,16 +1049,16 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
    );
 
    -- Conectarse como rpt_maria para generar eventos
-   CONNECT rpt_maria/"RptMaria#2024"@ORCLPDB1
+   CONNECT rpt_maria/"RptMaria#2024"@ORCL
 
    SELECT nombre, departamento FROM system.empleados_sensibles;
 
    -- Intentar login fallido para generar evento de fallo
-   CONNECT usuario_inexistente/"WrongPass123"@ORCLPDB1
+   CONNECT usuario_inexistente/"WrongPass123"@ORCL
 
    -- Volver como SYSTEM para consultar el trail
-   CONNECT system/"Oracle123"@ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   CONNECT system/"Oracle_4U"@ORCL
+   ALTER SESSION SET CONTAINER = ORCL;
    ```
 
 5. Consulta el `UNIFIED_AUDIT_TRAIL` para verificar los registros:
@@ -1146,8 +1146,8 @@ USUARIO_INEXISTENTE LOGON                   1    1017    1017
 1. Genera un reporte completo de usuarios y sus privilegios:
 
    ```sql
-   -- Asegurarse de estar en ORCLPDB1 como SYSTEM
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   -- Asegurarse de estar en ORCL como SYSTEM
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Reporte completo: usuarios con sus roles y privilegios directos
    SELECT u.username,
@@ -1277,8 +1277,8 @@ APP_ERP     EXPIRED & LOCKED                       15-JAN-2024
 1. Verifica el estado completo del entorno de seguridad:
 
    ```sql
-   -- Conectarse como SYSTEM a ORCLPDB1
-   ALTER SESSION SET CONTAINER = ORCLPDB1;
+   -- Conectarse como SYSTEM a ORCL
+   ALTER SESSION SET CONTAINER = ORCL;
 
    -- Prueba 1: Verificar todos los usuarios de práctica
    SELECT username, account_status, profile
@@ -1463,7 +1463,7 @@ El tablespace fue creado en un contenedor diferente (CDB root en lugar de la PDB
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') AS contenedor FROM DUAL;
 
 -- Si estás en CDB$ROOT, cambiar a la PDB
-ALTER SESSION SET CONTAINER = ORCLPDB1;
+ALTER SESSION SET CONTAINER = ORCL;
 
 -- Verificar que el tablespace existe en la PDB
 SELECT tablespace_name, status
@@ -1472,7 +1472,7 @@ WHERE  tablespace_name = 'PRACTICE_TS';
 
 -- Si no existe, crear el tablespace en la PDB correcta
 CREATE TABLESPACE practice_ts
-    DATAFILE 'C:\app\oracle\oradata\ORCL\ORCLPDB1\practice_ts01.dbf'
+    DATAFILE 'C:\app\oracle\oradata\ORCL\ORCL\practice_ts01.dbf'
     SIZE 100M
     AUTOEXTEND ON NEXT 10M MAXSIZE 500M;
 ```
@@ -1520,8 +1520,8 @@ WHERE  username = 'NOMBRE_USUARIO';
 Ejecuta los siguientes comandos para eliminar todos los objetos creados durante esta práctica. Realiza la limpieza al finalizar la sesión o cuando necesites liberar espacio.
 
 ```sql
--- Conectarse como SYSTEM a ORCLPDB1
-ALTER SESSION SET CONTAINER = ORCLPDB1;
+-- Conectarse como SYSTEM a ORCL
+ALTER SESSION SET CONTAINER = ORCL;
 
 -- Paso 1: Deshabilitar y eliminar políticas de auditoría
 NOAUDIT POLICY pol_audit_empleados;
