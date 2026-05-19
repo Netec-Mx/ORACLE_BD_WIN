@@ -1054,8 +1054,7 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
    CONNECT usuario_inexistente/"WrongPass123"@ORCL
 
    -- Volver como SYSTEM para consultar el trail
-   CONNECT system/"Oracle_4U"@ORCL
-   ALTER SESSION SET CONTAINER = ORCL;
+   CONNECT system/"oracle_4U"@ORCL
    ```
 
 5. Consulta el `UNIFIED_AUDIT_TRAIL` para verificar los registros:
@@ -1097,7 +1096,7 @@ RPT_PEDRO   OPEN              15-JAN-2024                  15-MAR-2024      PERF
    ORDER  BY event_timestamp DESC;
    ```
 
-**Salida Esperada:**
+**Salida Esperada de los comandos anteriores:**
 
 ```
 VALUE
