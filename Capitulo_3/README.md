@@ -30,7 +30,6 @@ Al completar esta práctica, serás capaz de:
 - [ ] Crear roles personalizados (`ROL_READONLY`, `ROL_DEVELOPER`) y asignarlos a usuarios específicos
 - [ ] Definir perfiles de contraseña con políticas de expiración, intentos fallidos y reutilización
 - [ ] Habilitar y consultar Oracle Unified Auditing para registrar operaciones DDL y accesos a tablas sensibles
-
 ---
 
 # Prerrequisitos
