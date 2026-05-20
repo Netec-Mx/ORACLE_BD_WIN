@@ -1,4 +1,4 @@
-# Práctica 6. Monitoreo del Performance de la Base de Datos
+REM Práctica 6. Monitoreo del Performance de la Base de Datos
 
 ## Metadatos
 
@@ -49,7 +49,7 @@ Al completar este laboratorio, serás capaz de:
 
 - Acceso a Oracle Database 19c con privilegios `DBA` (usuario `SYS` o equivalente)
 - Licencia Oracle Diagnostics Pack habilitada (requerida para AWR/ADDM en Enterprise Edition)
-- Acceso SSH a la máquina virtual Oracle Linux 8.x
+- Acceso SSH a la máquina virtual Windows 8.x
 - Acceso a SQL*Plus y/o SQL Developer
 - Usuario de práctica `PRACTICA_USER` creado con privilegios suficientes (ver sección de configuración inicial)
 
@@ -71,24 +71,25 @@ Al completar este laboratorio, serás capaz de:
 | Software | Versión | Propósito |
 |----------|---------|-----------|
 | Oracle Database | 19c (19.3+) | Motor principal de base de datos |
-| Oracle Linux | 8.x (8.7 u 8.8) | Sistema operativo huésped |
+| Windows | 8.x (8.7 u 8.8) | Sistema operativo huésped |
 | SQL*Plus | Incluido con Oracle 19c | Ejecución de comandos SQL y PL/SQL |
 | Oracle SQL Developer | 23.1 o superior | IDE gráfico para visualización de planes de ejecución |
 | Oracle Enterprise Manager DB Express | Incluido con Oracle 19c | Monitoreo visual de KPIs y memoria |
-| PuTTY / Terminal SSH | 0.79+ / Nativo | Acceso remoto a la VM Oracle Linux |
+| CMD / PowerShell | 0.79+ / Nativo | Acceso remoto a la VM Windows |
 
 ### Configuración Inicial
 
-Antes de comenzar el laboratorio, ejecuta los siguientes comandos para preparar el entorno. Conéctate a la VM Oracle Linux mediante SSH y verifica que la instancia esté operativa:
+Antes de comenzar el laboratorio, ejecuta los siguientes comandos para preparar el entorno. Conéctate a la VM Windows mediante SSH y verifica que la instancia esté operativa:
 
-```bash
-# Conectarse a la VM Oracle Linux via SSH
-ssh oracle@192.168.56.101
+```cmd
+REM Conectarse a la VM Windows via SSH
+REM Acceso SSH no requerido en Windows
+REM 192.168.56.101
 
-# Verificar que la instancia Oracle esté activa
-export ORACLE_SID=ORCL
-export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
-export PATH=$ORACLE_HOME/bin:$PATH
+REM Verificar que la instancia Oracle esté activa
+set ORACLE_SID=ORCL
+set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
+set PATH=%ORACLE_HOME%\bin;%PATH%
 
 sqlplus / as sysdba
 ```
@@ -109,8 +110,8 @@ SELECT log_mode FROM v$database;
 EXIT;
 ```
 
-```bash
-# Crear el usuario de práctica si no existe
+```cmd
+REM Crear el usuario de práctica si no existe
 sqlplus / as sysdba << 'EOF'
 -- Crear usuario de práctica para el laboratorio
 CREATE USER practica_user IDENTIFIED BY Oracle123
@@ -130,15 +131,15 @@ GRANT ADVISOR TO practica_user;
 GRANT EXECUTE ON DBMS_SQLTUNE TO practica_user;
 
 -- Crear directorio de trabajo para el laboratorio
-CREATE OR REPLACE DIRECTORY lab_dir AS '/home/oracle/lab06';
+CREATE OR REPLACE DIRECTORY lab_dir AS 'C:\lab/lab06';
 
 COMMIT;
 EXIT;
 EOF
 
-# Crear directorio de trabajo en el sistema operativo
-mkdir -p /home/oracle/lab06
-chmod 755 /home/oracle/lab06
+REM Crear directorio de trabajo en el sistema operativo
+mkdir C:\lab/lab06
+chmod 755 C:\lab/lab06
 echo "Entorno de laboratorio listo."
 ```
 
@@ -154,7 +155,7 @@ echo "Entorno de laboratorio listo."
 
 1. Conéctate a SQL*Plus como DBA y ejecuta el script de observación inicial:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba
    ```
 
@@ -291,18 +292,18 @@ echo "Entorno de laboratorio listo."
 
 7. Guarda los resultados como línea base en un archivo:
 
-   ```bash
+   ```cmd
    # Salir de SQL*Plus temporalmente
    EXIT;
    ```
 
-   ```bash
+   ```cmd
    # Generar script de línea base y guardarlo en archivo
-   sqlplus / as sysdba << 'EOF' > /home/oracle/lab06/baseline_inicial.txt
+   sqlplus / as sysdba << 'EOF' > C:\lab/lab06/baseline_inicial.txt
    SET LINESIZE 200
    SET PAGESIZE 100
    SET FEEDBACK ON
-   SPOOL /home/oracle/lab06/baseline_kpis.txt
+   SPOOL C:\lab/lab06/baseline_kpis.txt
 
    PROMPT ============================================================
    PROMPT LINEA BASE DE RENDIMIENTO - $(date)
@@ -329,8 +330,8 @@ echo "Entorno de laboratorio listo."
    EXIT;
    EOF
 
-   echo "Línea base guardada en /home/oracle/lab06/baseline_kpis.txt"
-   cat /home/oracle/lab06/baseline_kpis.txt
+   echo "Línea base guardada en C:\lab/lab06/baseline_kpis.txt"
+   cat C:\lab/lab06/baseline_kpis.txt
    ```
 
 **Salida Esperada:**
@@ -349,12 +350,12 @@ System I/O                    892.10
 Concurrency                   234.56
 ...
 
-Línea base guardada en /home/oracle/lab06/baseline_kpis.txt
+Línea base guardada en C:\lab/lab06/baseline_kpis.txt
 ```
 
 **Verificación:**
 
-- El archivo `/home/oracle/lab06/baseline_kpis.txt` debe existir y contener datos
+- El archivo `C:\lab/lab06/baseline_kpis.txt` debe existir y contener datos
 - El hit ratio del buffer cache debe ser consultable sin errores
 - Todas las vistas `V$` deben responder sin errores `ORA-`
 
@@ -368,7 +369,7 @@ Línea base guardada en /home/oracle/lab06/baseline_kpis.txt
 
 1. Crea el esquema de prueba con tablas e índices:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO ON
    SET FEEDBACK ON
@@ -420,7 +421,7 @@ Línea base guardada en /home/oracle/lab06/baseline_kpis.txt
 
 2. Pobla las tablas con datos de prueba usando PL/SQL:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO OFF
    SET FEEDBACK OFF
@@ -508,7 +509,7 @@ Línea base guardada en /home/oracle/lab06/baseline_kpis.txt
 
 3. Simula consultas ineficientes para generar carga y eventos de espera:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO OFF
    SET FEEDBACK OFF
@@ -594,7 +595,7 @@ Carga simulada completada.
 
 1. Toma el snapshot AWR inicial (antes de la carga de trabajo):
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON
    SET LINESIZE 200
@@ -614,7 +615,7 @@ Carga simulada completada.
 
 2. Genera el snapshot AWR de inicio del período de análisis:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON
 
@@ -639,7 +640,7 @@ Carga simulada completada.
 
 3. Ejecuta nuevamente la carga de trabajo para generar diferencia entre snapshots:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO OFF
    SET FEEDBACK OFF
@@ -698,7 +699,7 @@ Carga simulada completada.
 
 4. Toma el snapshot AWR final y genera el reporte:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON
    SET LINESIZE 200
@@ -748,7 +749,7 @@ Carga simulada completada.
 
 5. Genera el reporte AWR en formato texto automáticamente:
 
-   ```bash
+   ```cmd
    # Obtener snap_ids para el reporte
    SNAP_IDS=$(sqlplus -S / as sysdba << 'EOF'
    SET PAGESIZE 0 FEEDBACK OFF HEADING OFF
@@ -765,7 +766,7 @@ Carga simulada completada.
    sqlplus / as sysdba << EOF
    SET LINESIZE 200
    SET PAGESIZE 50
-   SPOOL /home/oracle/lab06/reporte_awr.txt
+   SPOOL C:\lab/lab06/reporte_awr.txt
 
    -- Generar reporte AWR usando DBMS_WORKLOAD_REPOSITORY
    SELECT output FROM TABLE(
@@ -781,14 +782,14 @@ Carga simulada completada.
    EXIT;
    EOF
 
-   echo "Reporte AWR generado en /home/oracle/lab06/reporte_awr.txt"
+   echo "Reporte AWR generado en C:\lab/lab06/reporte_awr.txt"
    echo "Primeras 100 líneas del reporte:"
-   head -100 /home/oracle/lab06/reporte_awr.txt
+   head -100 C:\lab/lab06/reporte_awr.txt
    ```
 
 6. Ejecuta ADDM para análisis automático y obtén recomendaciones:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON SIZE UNLIMITED
    SET LINESIZE 200
@@ -836,7 +837,7 @@ Carga simulada completada.
    /
 
    -- Consultar los hallazgos de ADDM
-   SPOOL /home/oracle/lab06/reporte_addm.txt
+   SPOOL C:\lab/lab06/reporte_addm.txt
 
    PROMPT ============================================================
    PROMPT REPORTE ADDM - HALLAZGOS Y RECOMENDACIONES
@@ -867,8 +868,8 @@ Carga simulada completada.
    EXIT;
    EOF
 
-   echo "Reporte ADDM guardado en /home/oracle/lab06/reporte_addm.txt"
-   cat /home/oracle/lab06/reporte_addm.txt
+   echo "Reporte ADDM guardado en C:\lab/lab06/reporte_addm.txt"
+   cat C:\lab/lab06/reporte_addm.txt
    ```
 
 **Salida Esperada:**
@@ -878,7 +879,7 @@ Snapshot AWR creado con ID: 142
 Rango de análisis: Snap 141 a 142
 DBID: 1539870386 | Instancia: 1
 
-Reporte AWR generado en /home/oracle/lab06/reporte_awr.txt
+Reporte AWR generado en C:\lab/lab06/reporte_awr.txt
 
 REPORTE ADDM - HALLAZGOS Y RECOMENDACIONES
 TYPE         IMPACT_TYPE  IMPACTO_PCT  HALLAZGO
@@ -896,8 +897,8 @@ SCHEMA             32.10    Consider creating an index on column ...
 
 **Verificación:**
 
-- El archivo `/home/oracle/lab06/reporte_awr.txt` debe tener más de 100 líneas
-- El archivo `/home/oracle/lab06/reporte_addm.txt` debe contener hallazgos y recomendaciones
+- El archivo `C:\lab/lab06/reporte_awr.txt` debe tener más de 100 líneas
+- El archivo `C:\lab/lab06/reporte_addm.txt` debe contener hallazgos y recomendaciones
 - La consulta a `dba_advisor_findings` debe retornar al menos 1 fila
 
 ---
@@ -910,7 +911,7 @@ SCHEMA             32.10    Consider creating an index on column ...
 
 1. Identifica las sentencias SQL con mayor consumo de recursos desde `V$SQL`:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 250
    SET PAGESIZE 50
@@ -922,7 +923,7 @@ SCHEMA             32.10    Consider creating an index on column ...
    COLUMN executions FORMAT 999,999
    COLUMN sql_text_short FORMAT A60
 
-   SPOOL /home/oracle/lab06/top_sql.txt
+   SPOOL C:\lab/lab06/top_sql.txt
 
    PROMPT ============================================================
    PROMPT TOP 10 SENTENCIAS SQL POR CONSUMO DE RECURSOS
@@ -967,12 +968,12 @@ SCHEMA             32.10    Consider creating an index on column ...
    EXIT;
    EOF
 
-   cat /home/oracle/lab06/top_sql.txt
+   cat C:\lab/lab06/top_sql.txt
    ```
 
 2. Obtén el `sql_id` de la consulta más costosa y genera su plan de ejecución:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
@@ -1011,7 +1012,7 @@ SCHEMA             32.10    Consider creating an index on column ...
 
 3. Genera el plan de ejecución para la consulta de join problemática:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
@@ -1050,7 +1051,7 @@ SCHEMA             32.10    Consider creating an index on column ...
 
 4. Analiza el plan real de ejecución usando `V$SQL_PLAN`:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
@@ -1080,7 +1081,7 @@ SCHEMA             32.10    Consider creating an index on column ...
 
 5. Usa `DBMS_XPLAN.DISPLAY_CURSOR` para ver el plan de la última ejecución real:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
@@ -1130,7 +1131,7 @@ Predicate Information:
 **Verificación:**
 
 - Los planes de ejecución deben mostrar `TABLE ACCESS FULL` para las consultas sin índices
-- El archivo `/home/oracle/lab06/top_sql.txt` debe contener sentencias de `PRACTICA_USER`
+- El archivo `C:\lab/lab06/top_sql.txt` debe contener sentencias de `PRACTICA_USER`
 - `DBMS_XPLAN.DISPLAY` debe retornar filas sin errores
 
 ---
@@ -1143,7 +1144,7 @@ Predicate Information:
 
 1. Ejecuta SQL Tuning Advisor para la consulta más costosa:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON SIZE UNLIMITED
    SET LINESIZE 200
@@ -1183,7 +1184,7 @@ Predicate Information:
    /
 
    -- Ver el reporte de recomendaciones
-   SPOOL /home/oracle/lab06/sql_tuning_reporte.txt
+   SPOOL C:\lab/lab06/sql_tuning_reporte.txt
 
    PROMPT ============================================================
    PROMPT REPORTE SQL TUNING ADVISOR - STA_VENTAS_LAB_01
@@ -1198,12 +1199,12 @@ Predicate Information:
    EOF
 
    echo "Reporte SQL Tuning Advisor guardado."
-   head -80 /home/oracle/lab06/sql_tuning_reporte.txt
+   head -80 C:\lab/lab06/sql_tuning_reporte.txt
    ```
 
 2. Ejecuta SQL Tuning Advisor para la consulta de join:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON SIZE UNLIMITED
 
@@ -1252,7 +1253,7 @@ Predicate Information:
 
 3. Implementa los índices recomendados (aplicando las recomendaciones del advisor):
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO ON
    SET FEEDBACK ON
@@ -1308,7 +1309,7 @@ Predicate Information:
 
 4. Verifica la mejora en los planes de ejecución después de crear los índices:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
@@ -1375,11 +1376,11 @@ Predicate Information:
 
 5. Documenta la mejora de rendimiento (Etapa DOCUMENTAR del ciclo):
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 50
-   SPOOL /home/oracle/lab06/documentacion_mejoras.txt
+   SPOOL C:\lab/lab06/documentacion_mejoras.txt
 
    PROMPT ============================================================
    PROMPT DOCUMENTACION DE MEJORAS - ETAPA DOCUMENTAR
@@ -1410,8 +1411,8 @@ Predicate Information:
    EXIT;
    EOF
 
-   echo "Documentación guardada en /home/oracle/lab06/documentacion_mejoras.txt"
-   cat /home/oracle/lab06/documentacion_mejoras.txt
+   echo "Documentación guardada en C:\lab/lab06/documentacion_mejoras.txt"
+   cat C:\lab/lab06/documentacion_mejoras.txt
    ```
 
 **Salida Esperada:**
@@ -1443,7 +1444,7 @@ Plan hash value: 987654321
 **Verificación:**
 
 - Los planes de ejecución OPTIMIZADOS deben mostrar `INDEX RANGE SCAN` en lugar de `TABLE ACCESS FULL`
-- El archivo `/home/oracle/lab06/sql_tuning_reporte.txt` debe contener recomendaciones de índices
+- El archivo `C:\lab/lab06/sql_tuning_reporte.txt` debe contener recomendaciones de índices
 - El tiempo de ejecución de las consultas debe haber disminuido (verificar con `SET TIMING ON`)
 
 ---
@@ -1456,7 +1457,7 @@ Plan hash value: 987654321
 
 1. Revisa la configuración actual de memoria:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 50
@@ -1464,7 +1465,7 @@ Plan hash value: 987654321
    COLUMN value FORMAT A20
    COLUMN description FORMAT A50
 
-   SPOOL /home/oracle/lab06/memoria_config_inicial.txt
+   SPOOL C:\lab/lab06/memoria_config_inicial.txt
 
    PROMPT ============================================================
    PROMPT CONFIGURACION ACTUAL DE MEMORIA - ESTADO INICIAL
@@ -1510,12 +1511,12 @@ Plan hash value: 987654321
    EXIT;
    EOF
 
-   cat /home/oracle/lab06/memoria_config_inicial.txt
+   cat C:\lab/lab06/memoria_config_inicial.txt
    ```
 
 2. Consulta el Memory Advisor para obtener recomendaciones de tamaño óptimo:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 50
@@ -1553,7 +1554,7 @@ Plan hash value: 987654321
 
 3. Configura ASMM (Automatic Shared Memory Management) ajustando `SGA_TARGET`:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON
    SET LINESIZE 200
@@ -1616,7 +1617,7 @@ Plan hash value: 987654321
 
 4. Configura AMM (Automatic Memory Management) con `MEMORY_TARGET`:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET SERVEROUTPUT ON
    SET LINESIZE 200
@@ -1673,11 +1674,11 @@ Plan hash value: 987654321
 
 5. Monitorea el estado de la memoria después de la configuración:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 50
-   SPOOL /home/oracle/lab06/memoria_monitoreo.txt
+   SPOOL C:\lab/lab06/memoria_monitoreo.txt
 
    PROMPT ============================================================
    PROMPT MONITOREO DE MEMORIA POST-CONFIGURACION
@@ -1723,7 +1724,7 @@ Plan hash value: 987654321
    EOF
 
    echo "Monitoreo de memoria guardado."
-   cat /home/oracle/lab06/memoria_monitoreo.txt
+   cat C:\lab/lab06/memoria_monitoreo.txt
    ```
 
 **Salida Esperada:**
@@ -1765,7 +1766,7 @@ SGA_SIZE_MB  SGA_SIZE_FACTOR  ESTD_DB_TIME_FACTOR  ESTD_PHYSICAL_READS
 
 1. Simula el escenario de degradación: una consulta de reporte ejecutada sin índices:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO OFF
    SET FEEDBACK OFF
@@ -1810,11 +1811,11 @@ SGA_SIZE_MB  SGA_SIZE_FACTOR  ESTD_DB_TIME_FACTOR  ESTD_PHYSICAL_READS
 
 2. Etapa OBSERVAR: Captura el estado del sistema durante/después de la carga:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 50
-   SPOOL /home/oracle/lab06/escenario_observar.txt
+   SPOOL C:\lab/lab06/escenario_observar.txt
 
    PROMPT ============================================================
    PROMPT ETAPA 1: OBSERVAR - Estado del sistema
@@ -1857,16 +1858,16 @@ SGA_SIZE_MB  SGA_SIZE_FACTOR  ESTD_DB_TIME_FACTOR  ESTD_PHYSICAL_READS
    EXIT;
    EOF
 
-   cat /home/oracle/lab06/escenario_observar.txt
+   cat C:\lab/lab06/escenario_observar.txt
    ```
 
 3. Etapa ANALIZAR: Genera plan de ejecución y compara con la línea base:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
-   SPOOL /home/oracle/lab06/escenario_analizar.txt
+   SPOOL C:\lab/lab06/escenario_analizar.txt
 
    PROMPT ============================================================
    PROMPT ETAPA 2: ANALIZAR - Plan de ejecución del reporte degradado
@@ -1895,16 +1896,16 @@ SGA_SIZE_MB  SGA_SIZE_FACTOR  ESTD_DB_TIME_FACTOR  ESTD_PHYSICAL_READS
    EXIT;
    EOF
 
-   cat /home/oracle/lab06/escenario_analizar.txt
+   cat C:\lab/lab06/escenario_analizar.txt
    ```
 
 4. Etapa ACTUAR: Implementa la solución optimizada:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123 << 'EOF'
    SET ECHO ON
    SET TIMING ON
-   SPOOL /home/oracle/lab06/escenario_actuar.txt
+   SPOOL C:\lab/lab06/escenario_actuar.txt
 
    PROMPT ============================================================
    PROMPT ETAPA 3: ACTUAR - Implementar optimizacion del reporte
@@ -1960,16 +1961,16 @@ SGA_SIZE_MB  SGA_SIZE_FACTOR  ESTD_DB_TIME_FACTOR  ESTD_PHYSICAL_READS
    EXIT;
    EOF
 
-   cat /home/oracle/lab06/escenario_actuar.txt
+   cat C:\lab/lab06/escenario_actuar.txt
    ```
 
 5. Etapa DOCUMENTAR: Genera el reporte final consolidado del laboratorio:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba << 'EOF'
    SET LINESIZE 200
    SET PAGESIZE 100
-   SPOOL /home/oracle/lab06/reporte_final_lab06.txt
+   SPOOL C:\lab/lab06/reporte_final_lab06.txt
 
    PROMPT ============================================================
    PROMPT REPORTE FINAL - LABORATORIO 06-00-01
@@ -2032,8 +2033,8 @@ SGA_SIZE_MB  SGA_SIZE_FACTOR  ESTD_DB_TIME_FACTOR  ESTD_PHYSICAL_READS
    echo ""
    echo "============================================"
    echo "LABORATORIO 06-00-01 COMPLETADO"
-   echo "Archivos generados en /home/oracle/lab06/:"
-   ls -la /home/oracle/lab06/
+   echo "Archivos generados en C:\lab/lab06/:"
+   ls -la C:\lab/lab06/
    echo "============================================"
    ```
 
@@ -2066,7 +2067,7 @@ PRODUCTOS_LAB      1,000  15-JAN-2025 14:32
 VENTAS_LAB       100,000  15-JAN-2025 14:45
 
 LABORATORIO 06-00-01 COMPLETADO
-Archivos generados en /home/oracle/lab06/:
+Archivos generados en C:\lab/lab06/:
 -rw-r--r-- 1 oracle oinstall  45234 Jan 15 14:50 baseline_kpis.txt
 -rw-r--r-- 1 oracle oinstall 234567 Jan 15 15:12 reporte_awr.txt
 -rw-r--r-- 1 oracle oinstall  12345 Jan 15 15:13 reporte_addm.txt
@@ -2075,7 +2076,7 @@ Archivos generados en /home/oracle/lab06/:
 
 **Verificación:**
 
-- El directorio `/home/oracle/lab06/` debe contener al menos 8 archivos de reporte
+- El directorio `C:\lab/lab06/` debe contener al menos 8 archivos de reporte
 - El reporte final debe mostrar todos los índices creados con estado `VALID`
 - Las estadísticas de tablas deben tener `last_analyzed` con fecha del día actual
 
@@ -2085,16 +2086,16 @@ Archivos generados en /home/oracle/lab06/:
 
 ### Criterios de Éxito
 
-- [ ] La línea base de rendimiento fue capturada exitosamente y guardada en `/home/oracle/lab06/baseline_kpis.txt`
+- [ ] La línea base de rendimiento fue capturada exitosamente y guardada en `C:\lab/lab06/baseline_kpis.txt`
 - [ ] Las tablas `ventas_lab`, `clientes_lab` y `productos_lab` contienen 100,000, 5,000 y 1,000 registros respectivamente
-- [ ] Se generaron al menos 2 snapshots AWR y el reporte AWR en `/home/oracle/lab06/reporte_awr.txt` tiene más de 100 líneas
-- [ ] El reporte ADDM en `/home/oracle/lab06/reporte_addm.txt` contiene al menos 1 hallazgo
+- [ ] Se generaron al menos 2 snapshots AWR y el reporte AWR en `C:\lab/lab06/reporte_awr.txt` tiene más de 100 líneas
+- [ ] El reporte ADDM en `C:\lab/lab06/reporte_addm.txt` contiene al menos 1 hallazgo
 - [ ] Los planes de ejecución ANTES de crear índices muestran `TABLE ACCESS FULL` en `ventas_lab`
 - [ ] Los planes de ejecución DESPUÉS de crear índices muestran `INDEX RANGE SCAN` o `INDEX SKIP SCAN`
-- [ ] El reporte SQL Tuning Advisor en `/home/oracle/lab06/sql_tuning_reporte.txt` contiene recomendaciones de índices
+- [ ] El reporte SQL Tuning Advisor en `C:\lab/lab06/sql_tuning_reporte.txt` contiene recomendaciones de índices
 - [ ] Se crearon al menos 8 índices en el esquema `PRACTICA_USER` con estado `VALID`
 - [ ] Los parámetros de memoria `SGA_TARGET` y `PGA_AGGREGATE_TARGET` fueron modificados sin errores
-- [ ] El reporte final consolidado fue generado en `/home/oracle/lab06/reporte_final_lab06.txt`
+- [ ] El reporte final consolidado fue generado en `C:\lab/lab06/reporte_final_lab06.txt`
 
 ### Procedimiento de Pruebas
 
@@ -2366,7 +2367,7 @@ SELECT privilege FROM dba_tab_privs WHERE grantee = 'PRACTICA_USER' AND owner = 
 
 Ejecuta los siguientes comandos para limpiar los objetos creados durante el laboratorio. Realiza la limpieza al final del curso o cuando el espacio en disco sea limitado.
 
-```bash
+```cmd
 sqlplus / as sysdba << 'EOF'
 SET SERVEROUTPUT ON
 SET ECHO ON
@@ -2423,20 +2424,20 @@ EXIT;
 EOF
 ```
 
-```bash
-# Limpiar archivos de reporte del sistema operativo
-# ADVERTENCIA: Esto elimina todos los reportes generados
-# Guardar copias antes si son necesarias para entregables
+```cmd
+REM Limpiar archivos de reporte del sistema operativo
+REM ADVERTENCIA: Esto elimina todos los reportes generados
+REM Guardar copias antes si son necesarias para entregables
 
-echo "Archivos en /home/oracle/lab06/:"
-ls -la /home/oracle/lab06/
+echo "Archivos en C:\lab/lab06/:"
+ls -la C:\lab/lab06/
 
 read -p "¿Desea eliminar los archivos de reporte? (s/N): " confirm
 if [ "$confirm" = "s" ] || [ "$confirm" = "S" ]; then
-    rm -rf /home/oracle/lab06/
-    echo "Directorio /home/oracle/lab06/ eliminado."
+    rmdir /s /q C:\lab/lab06/
+    echo "Directorio C:\lab/lab06/ eliminado."
 else
-    echo "Archivos conservados en /home/oracle/lab06/"
+    echo "Archivos conservados en C:\lab/lab06/"
 fi
 ```
 
