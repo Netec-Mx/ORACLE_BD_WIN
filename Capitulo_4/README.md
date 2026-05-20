@@ -261,7 +261,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
    -- Tablespace con AUTOALLOCATE: Oracle gestiona el tamaño de extensiones
    -- Adecuado para objetos de tamaño variable y mixto
    CREATE TABLESPACE lab_autoalloc_ts
-     DATAFILE '/u01/oradata/ORCL/lab_autoalloc_ts01.dbf'
+     DATAFILE 'C:\app\oracle\oradata\ORCL\lab_autoalloc_ts01.dbf'
      SIZE 100M
      AUTOEXTEND ON NEXT 50M MAXSIZE 500M
      EXTENT MANAGEMENT LOCAL AUTOALLOCATE
@@ -274,7 +274,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
    -- Tablespace con UNIFORM SIZE 1M: todas las extensiones son de 1 MB
    -- Adecuado para objetos de tamaño similar, reduce fragmentación
    CREATE TABLESPACE lab_uniform_ts
-     DATAFILE '/u01/oradata/ORCL/lab_uniform_ts01.dbf'
+     DATAFILE 'C:\app\oracle\oradata\ORCL\lab_uniform_ts01.dbf'
      SIZE 100M
      AUTOEXTEND ON NEXT 50M MAXSIZE 500M
      EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M
@@ -286,7 +286,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
    ```sql
    -- Tablespace de aplicación: datos transaccionales
    CREATE TABLESPACE lab_app_data_ts
-     DATAFILE '/u01/oradata/ORCL/lab_app_data01.dbf'
+     DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_data01.dbf'
      SIZE 200M
      AUTOEXTEND ON NEXT 100M MAXSIZE 2G
      EXTENT MANAGEMENT LOCAL AUTOALLOCATE
@@ -298,7 +298,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
    ```sql
    -- Tablespace de índices: separado para optimización de I/O
    CREATE TABLESPACE lab_app_idx_ts
-     DATAFILE '/u01/oradata/ORCL/lab_app_idx01.dbf'
+     DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_idx01.dbf'
      SIZE 100M
      AUTOEXTEND ON NEXT 50M MAXSIZE 1G
      EXTENT MANAGEMENT LOCAL UNIFORM SIZE 2M
@@ -331,7 +331,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
 
    ```cmd
    -- Desde el terminal Linux (abrir nueva sesión SSH)
-   ls -lh /u01/oradata/ORCL/lab_*.dbf
+   ls -lh C:\app\oracle\oradata\ORCL\lab_*.dbf
    ```
 
 **Salida Esperada:**
@@ -356,7 +356,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
 
 - Los 4 tablespaces deben aparecer en `DBA_TABLESPACES` con estado `ONLINE`
 - `LAB_UNIFORM_TS` y `LAB_APP_IDX_TS` deben mostrar `ALLOCATION_TYPE = UNIFORM`
-- Los archivos físicos deben existir en `/u01/oradata/ORCL/`
+- Los archivos físicos deben existir en `C:\app\oracle\oradata\ORCL\`
 - Confirmar que `EXTENT_MANAGEMENT = LOCAL` para todos
 
 ---
@@ -372,7 +372,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
    ```sql
    -- Agregar segundo datafile: simula expansión de capacidad cuando el primero se llena
    ALTER TABLESPACE lab_app_data_ts
-     ADD DATAFILE '/u01/oradata/ORCL/lab_app_data02.dbf'
+     ADD DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_data02.dbf'
      SIZE 150M
      AUTOEXTEND ON NEXT 100M MAXSIZE 2G;
    ```
@@ -382,7 +382,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
    ```sql
    -- Agregar segundo datafile a tablespace de índices
    ALTER TABLESPACE lab_app_idx_ts
-     ADD DATAFILE '/u01/oradata/ORCL/lab_app_idx02.dbf'
+     ADD DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_idx02.dbf'
      SIZE 100M
      AUTOEXTEND OFF;
    ```
@@ -391,7 +391,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
 
    ```sql
    -- Aumentar el tamaño del primer datafile a 300 MB
-   ALTER DATABASE DATAFILE '/u01/oradata/ORCL/lab_app_data01.dbf'
+   ALTER DATABASE DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_data01.dbf'
      RESIZE 300M;
    ```
 
@@ -399,7 +399,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
 
    ```sql
    -- Habilitar AUTOEXTEND en el datafile que se creó sin esta opción
-   ALTER DATABASE DATAFILE '/u01/oradata/ORCL/lab_app_idx02.dbf'
+   ALTER DATABASE DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_idx02.dbf'
      AUTOEXTEND ON NEXT 50M MAXSIZE 500M;
    ```
 
@@ -465,7 +465,7 @@ LAB_APP_IDX_TS              2    200.00         1524.00
 - `LAB_APP_DATA_TS` debe tener 2 datafiles con un total de 450 MB
 - `LAB_APP_IDX_TS` debe tener 2 datafiles, ambos con `AUTOEXT = YES`
 - El datafile `lab_app_data01.dbf` debe mostrar 300 MB (después del RESIZE)
-- Confirmar los tamaños en el sistema operativo: `ls -lh /u01/oradata/ORCL/lab_app*.dbf`
+- Confirmar los tamaños en el sistema operativo: `ls -lh C:\app\oracle\oradata\ORCL\lab_app*.dbf`
 
 ---
 
@@ -682,7 +682,7 @@ LAB_EMPLEADOS           2        5      272   1024.00     128
    ```sql
    -- Crear un tablespace de undo alternativo
    CREATE UNDO TABLESPACE undotbs2
-     DATAFILE '/u01/oradata/ORCL/undotbs2_01.dbf'
+     DATAFILE 'C:\app\oracle\oradata\ORCL\undotbs2_01.dbf'
      SIZE 200M
      AUTOEXTEND ON NEXT 50M MAXSIZE 1G
      RETENTION GUARANTEE;
@@ -780,7 +780,7 @@ undo_retention           integer     1800
 - `SHOW PARAMETER undo_tablespace` debe mostrar `UNDOTBS2`
 - `SHOW PARAMETER undo_retention` debe mostrar `1800`
 - El tablespace `UNDOTBS2` debe aparecer en `DBA_TABLESPACES` con `CONTENTS = UNDO`
-- El archivo `/u01/oradata/ORCL/undotbs2_01.dbf` debe existir en disco
+- El archivo `C:\app\oracle\oradata\ORCL\undotbs2_01.dbf` debe existir en disco
 
 ---
 
@@ -834,7 +834,7 @@ undo_retention           integer     1800
    ```sql
    -- Agregar tempfile adicional para mayor capacidad de operaciones temporales
    ALTER TABLESPACE temp
-     ADD TEMPFILE '/u01/oradata/ORCL/temp02.dbf'
+     ADD TEMPFILE 'C:\app\oracle\oradata\ORCL\temp02.dbf'
      SIZE 100M
      AUTOEXTEND ON NEXT 50M MAXSIZE 500M;
    ```
@@ -906,14 +906,14 @@ undo_retention           integer     1800
 -- Tempfiles después de agregar el segundo:
 TABLESPACE_NAME  FILE_NAME               SIZE_MB  AUTOEXT  MAX_MB
 ---------------- ----------------------- -------- -------- -------
-TEMP             /u01/oradata/ORCL/temp01.dbf  100.00  YES    32767.98
-TEMP             /u01/oradata/ORCL/temp02.dbf  100.00  YES      500.00
+TEMP             C:\app\oracle\oradata\ORCL\temp01.dbf  100.00  YES    32767.98
+TEMP             C:\app\oracle\oradata\ORCL\temp02.dbf  100.00  YES      500.00
 ```
 
 **Verificación:**
 
 - `DBA_TEMP_FILES` debe mostrar 2 tempfiles para el tablespace `TEMP`
-- El archivo `/u01/oradata/ORCL/temp02.dbf` debe existir en disco
+- El archivo `C:\app\oracle\oradata\ORCL\temp02.dbf` debe existir en disco
 - `V$TEMP_SPACE_HEADER` debe mostrar ambos tempfiles con su estado
 
 ---
@@ -1156,7 +1156,7 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
    ORDER BY tablespace_name, file_id;
    ```
 
-   > **Concepto ASM:** En un entorno ASM, las rutas de `FILE_NAME` tendrían el formato `+DISKGROUP/DBNAME/DATAFILE/tablespace.nnn.nnnnnnnnn` en lugar de rutas del sistema de archivos como `/u01/oradata/ORCL/...`. ASM abstrae la ubicación física de los archivos igual que los tablespaces abstraen los datafiles para las aplicaciones.
+   > **Concepto ASM:** En un entorno ASM, las rutas de `FILE_NAME` tendrían el formato `+DISKGROUP/DBNAME/DATAFILE/tablespace.nnn.nnnnnnnnn` en lugar de rutas del sistema de archivos como `C:\app\oracle\oradata\ORCL\...`. ASM abstrae la ubicación física de los archivos igual que los tablespaces abstraen los datafiles para las aplicaciones.
 
 **Salida Esperada (con ASM disponible):**
 
@@ -1284,7 +1284,7 @@ no rows selected
 
 **Síntomas:**
 - Al ejecutar `CREATE TABLESPACE` o `ALTER TABLESPACE ADD DATAFILE` aparece:
-  `ORA-01119: error creating database file '/u01/oradata/ORCL/lab_app_data01.dbf'`
+  `ORA-01119: error creating database file 'C:\app\oracle\oradata\ORCL\lab_app_data01.dbf'`
   `ORA-27038: created file already exists`
 
 **Causa:**
@@ -1294,10 +1294,10 @@ El archivo físico ya existe en el sistema de archivos (posiblemente de una ejec
 
 ```cmd
 -  Desde el terminal Linux, verificar si el archivo existe
-ls -lh /u01/oradata/ORCL/lab_*.dbf
+ls -lh C:\app\oracle\oradata\ORCL\lab_*.dbf
 
 -  Si el archivo existe pero el tablespace NO existe en Oracle, eliminar el archivo
-rm /u01/oradata/ORCL/lab_app_data01.dbf
+rm C:\app\oracle\oradata\ORCL\lab_app_data01.dbf
 
 -  Si tanto el archivo como el tablespace existen, primero eliminar el tablespace
 -  y luego el archivo (o usar INCLUDING CONTENTS AND DATAFILES)
@@ -1309,7 +1309,7 @@ DROP TABLESPACE lab_app_data_ts INCLUDING CONTENTS AND DATAFILES;
 
 -- Luego recrearlo
 CREATE TABLESPACE lab_app_data_ts
-  DATAFILE '/u01/oradata/ORCL/lab_app_data01.dbf'
+  DATAFILE 'C:\app\oracle\oradata\ORCL\lab_app_data01.dbf'
   SIZE 200M
   AUTOEXTEND ON NEXT 100M MAXSIZE 2G
   EXTENT MANAGEMENT LOCAL AUTOALLOCATE
@@ -1343,7 +1343,7 @@ DROP TABLESPACE undotbs2 INCLUDING CONTENTS AND DATAFILES;
 
 -- Y recrearlo
 CREATE UNDO TABLESPACE undotbs2
-  DATAFILE '/u01/oradata/ORCL/undotbs2_01.dbf'
+  DATAFILE 'C:\app\oracle\oradata\ORCL\undotbs2_01.dbf'
   SIZE 200M
   AUTOEXTEND ON NEXT 50M MAXSIZE 1G
   RETENTION GUARANTEE;
@@ -1374,7 +1374,7 @@ GROUP BY tablespace_name;
 
 -- Si no hay espacio, agregar un datafile al tablespace de undo activo
 ALTER TABLESPACE undotbs1
-  ADD DATAFILE '/u01/oradata/ORCL/undotbs1_02.dbf'
+  ADD DATAFILE 'C:\app\oracle\oradata\ORCL\undotbs1_02.dbf'
   SIZE 200M AUTOEXTEND ON NEXT 50M MAXSIZE 1G;
 ```
 
@@ -1403,7 +1403,7 @@ END;
 **Síntomas:**
 - Al ejecutar `ALTER TABLESPACE lab_uniform_ts ONLINE` aparece:
   `ORA-01113: file N needs media recovery`
-  `ORA-01110: data file N: '/u01/oradata/ORCL/lab_uniform_ts01.dbf'`
+  `ORA-01110: data file N: 'C:\app\oracle\oradata\ORCL\lab_uniform_ts01.dbf'`
 
 **Causa:**
 El tablespace fue puesto `OFFLINE IMMEDIATE` (o hubo un fallo durante el modo offline) y los datafiles necesitan recuperación de medios antes de poder volver a `ONLINE`.
@@ -1425,7 +1425,7 @@ ALTER TABLESPACE lab_uniform_ts ONLINE;
 DROP TABLESPACE lab_uniform_ts INCLUDING CONTENTS AND DATAFILES;
 
 CREATE TABLESPACE lab_uniform_ts
-  DATAFILE '/u01/oradata/ORCL/lab_uniform_ts01.dbf'
+  DATAFILE 'C:\app\oracle\oradata\ORCL\lab_uniform_ts01.dbf'
   SIZE 100M AUTOEXTEND ON NEXT 50M MAXSIZE 500M
   EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M
   SEGMENT SPACE MANAGEMENT AUTO;
@@ -1510,7 +1510,7 @@ DROP TABLESPACE lab_uniform_ts INCLUDING CONTENTS AND DATAFILES;
 
 -- Paso 5: Eliminar el tempfile adicional del tablespace TEMP
 -- (Los tempfiles se eliminan con el comando ALTER TABLESPACE)
-ALTER TABLESPACE temp DROP TEMPFILE '/u01/oradata/ORCL/temp02.dbf';
+ALTER TABLESPACE temp DROP TEMPFILE 'C:\app\oracle\oradata\ORCL\temp02.dbf';
 
 -- Paso 6: Verificar que la limpieza fue exitosa
 SELECT tablespace_name, status FROM dba_tablespaces
@@ -1526,9 +1526,9 @@ SHOW PARAMETER undo_tablespace;
 
 ```cmd
 -  Verificar que los archivos físicos fueron eliminados del sistema operativo
-ls -lh /u01/oradata/ORCL/lab_*.dbf 2>/dev/null || echo "Archivos de práctica eliminados correctamente"
-ls -lh /u01/oradata/ORCL/undotbs2*.dbf 2>/dev/null || echo "Archivo UNDOTBS2 eliminado correctamente"
-ls -lh /u01/oradata/ORCL/temp02.dbf 2>/dev/null || echo "Tempfile adicional eliminado correctamente"
+ls -lh C:\app\oracle\oradata\ORCL\lab_*.dbf 2>/dev/null || echo "Archivos de práctica eliminados correctamente"
+ls -lh C:\app\oracle\oradata\ORCL\undotbs2*.dbf 2>/dev/null || echo "Archivo UNDOTBS2 eliminado correctamente"
+ls -lh C:\app\oracle\oradata\ORCL\temp02.dbf 2>/dev/null || echo "Tempfile adicional eliminado correctamente"
 
 -  Verificar espacio liberado
 df -h /u01
