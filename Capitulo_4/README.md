@@ -80,7 +80,7 @@ Antes de comenzar, verificar que la instancia Oracle esté activa y que exista e
 
 ```cmd
 -  Conectarse a la VM Windows via RDP o SSH
--  Verificar que la instancia Oracle esté activa
+-  En una terminal de Windows, verificar que la instancia Oracle esté activa
 sqlplus / as sysdba
 SELECT instance_name, status, version FROM v$instance;
 EXIT;
@@ -88,7 +88,7 @@ EXIT;
 -  Verificar espacio disponible en el sistema de archivos
 fsutil volume diskfree C:
 
--  Verificar que el directorio de datafiles y FRA existen.
+-  Verificar que el directorio oradata de datafiles y FRA existen.
 dir C:\app\oracle\oradata\ORCL
 dir C:\app\oracle\fast_recovery_area\ORCL
 
