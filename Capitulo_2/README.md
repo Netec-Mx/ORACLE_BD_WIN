@@ -78,7 +78,7 @@ Ruta:
 notepad %ORACLE_HOME%\network\admin\listener.ora
 ```
 Contenido:
-```ini
+```
 # Registro estático de la instancia de base de datos
 # (Complementa el auto-registro dinámico del proceso LREG)
 SID_LIST_LISTENER =
@@ -126,7 +126,7 @@ Ruta:
 notepad %ORACLE_HOME%\network\admin\tnsnames.ora
 ```
 Contenido:
-```ini
+```
    # Alias principal para la base de datos ORCL
    # Conexión estándar mediante TCP/IP
    ORCL =
