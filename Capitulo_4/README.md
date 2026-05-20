@@ -1,4 +1,4 @@
-# Práctica 4. Administración del Almacenamiento de la Base de Datos Oracle 19c 
+## Práctica 4. Administración del Almacenamiento de la Base de Datos Oracle 19c 
 
 ## Metadatos
 
@@ -41,11 +41,11 @@ Al completar esta práctica, serás capaz de:
 - Familiaridad con SQL*Plus y conexión como usuario con privilegios DBA
 - Conceptos básicos de almacenamiento: bloques Oracle, extensiones (extents) y segmentos
 - Prácticas 01-00-01, 02-00-01 y 03-00-01 completadas exitosamente
-- Conocimiento del sistema de archivos Linux: rutas, permisos y comandos básicos (`ls`, `df`, `du`)
+- Conocimiento del sistema de archivos Window: rutas, permisos y comandos básicos.
 
 ### Acceso Requerido
 
-- Conexión SSH a la máquina virtual Oracle Linux 8.x
+- Conexión SSH a la máquina virtual Windows 11x o Server
 - Acceso a SQL*Plus como `SYS` con rol `SYSDBA` o como `SYSTEM`
 - Usuario de práctica `PRACTICA_USER` creado en prácticas anteriores con privilegios `DBA` o equivalentes
 - Al menos **5 GB de espacio libre en disco** en la partición donde residen los datafiles (generalmente `/u01`)
@@ -61,7 +61,7 @@ Al completar esta práctica, serás capaz de:
 |------------|----------------|
 | CPU | Intel Core i5 8va gen o superior (virtualización habilitada) |
 | RAM | Mínimo 8 GB asignados a la VM (16 GB recomendado) |
-| Almacenamiento | Mínimo 5 GB libres en `/u01` para datafiles de práctica |
+| Almacenamiento | Mínimo 5 GB libres en `C:\app` para datafiles de práctica |
 | Red | Adaptador de red funcional (loopback para conexión local) |
 
 ### Requisitos de Software
@@ -69,35 +69,34 @@ Al completar esta práctica, serás capaz de:
 | Software | Versión | Propósito |
 |----------|---------|-----------|
 | Oracle Database | 19c (19.3+) | Motor de base de datos principal |
-| Oracle Linux | 8.x (8.7 o 8.8) | Sistema operativo huésped |
+| Windows | 11x o Server (8.7 o 8.8) | Sistema operativo huésped |
 | SQL*Plus | Incluido con Oracle 19c | Ejecución de comandos SQL y DBA |
-| PuTTY / Terminal SSH | 0.79+ / nativo | Acceso remoto a la VM |
-| Oracle Grid Infrastructure | 19c (opcional para ASM) | Instancia ASM para sección final |
+| CMD / PowerShell | 0.79+ / nativo | Acceso - oto a la VM |
+| Oracle Grid Infrastructure (opcional) | 19c (opcional para ASM) | Instancia ASM para sección final |
 
 ### Configuración Inicial
 
 Antes de comenzar, verificar que la instancia Oracle esté activa y que exista espacio suficiente en disco:
 
-```bash
-# Conectarse a la VM Oracle Linux via SSH
-ssh oracle@192.168.56.101
-
-# Verificar que la instancia Oracle esté activa
-sqlplus / as sysdba <<EOF
+```cmd
+-  Conectarse a la VM Windows via RDP o SSH
+-  Verificar que la instancia Oracle esté activa
+sqlplus / as sysdba
 SELECT instance_name, status, version FROM v\$instance;
 EXIT;
-EOF
 
-# Verificar espacio disponible en el sistema de archivos
-df -h /u01
+-  Verificar espacio disponible en el sistema de archivos
+fsutil volume diskfree C:
 
-# Verificar que el directorio de datafiles existe y tiene permisos correctos
-ls -la /u01/oradata/
+-  Verificar que el directorio de datafiles y FRA existen.
+dir C:\app\oracle\oradata\ORCL
+dir C:\app\oracle\fast_recovery_area\ORCL
 
-# Identificar el nombre de la base de datos (SID)
-echo "ORACLE_SID: $ORACLE_SID"
-echo "ORACLE_BASE: $ORACLE_BASE"
-echo "ORACLE_HOME: $ORACLE_HOME"
+-  Identificar el nombre de la base de datos (SID)
+set|findstr ORA
+
+En caso de que no existan las variables, invocar el script `ambiente.bat` que se creo en prácticas anteriores.
+
 ```
 
 **Salida esperada de verificación:**
@@ -107,12 +106,43 @@ INSTANCE_NAME    STATUS       VERSION
 ---------------- ------------ -----------------
 ORCL             OPEN         19.0.0.0.0
 
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/sda1       200G   85G  115G  43% /u01
+C:\Users\Netec>dir C:\app\oracle\oradata\ORCL
+ Volume in drive C is Windows
+ Volume Serial Number is 5A1E-3981
+
+ Directory of C:\app\oracle\oradata\ORCL
+
+05/19/2026  02:55 AM    <DIR>          .
+05/14/2026  06:13 PM    <DIR>          ..
+05/20/2026  04:35 AM        10,600,448 CONTROL01.CTL
+05/20/2026  04:35 AM       209,715,712 REDO01.LOG
+05/19/2026  11:50 AM       209,715,712 REDO02.LOG
+05/19/2026  11:50 AM       209,715,712 REDO03.LOG
+05/20/2026  04:35 AM       587,210,752 SYSAUX01.DBF
+05/20/2026  04:35 AM       943,726,592 SYSTEM01.DBF
+05/19/2026  08:21 AM        33,562,624 TEMP01.DBF
+05/20/2026  04:35 AM        68,165,632 UNDOTBS01.DBF
+05/20/2026  04:35 AM         5,251,072 USERS01.DBF
+               9 File(s)  2,277,664,256 bytes
+               2 Dir(s)  97,053,913,088 bytes free
+
+C:\Users\Netec>dir C:\app\oracle\fast_recovery_area\ORCL
+ Volume in drive C is Windows
+ Volume Serial Number is 5A1E-3981
+
+ Directory of C:\app\oracle\fast_recovery_area\ORCL
+
+05/14/2026  06:22 PM    <DIR>          .
+05/14/2026  06:13 PM    <DIR>          ..
+05/19/2026  01:43 AM    <DIR>          ARCHIVELOG
+05/20/2026  04:35 AM        10,600,448 CONTROL02.CTL
+05/14/2026  06:22 PM    <DIR>          ONLINELOG
+               1 File(s)     10,600,448 bytes
+               4 Dir(s)  97,053,913,088 bytes free
 
 ORACLE_SID: ORCL
-ORACLE_BASE: /u01/app/oracle
-ORACLE_HOME: /u01/app/oracle/product/19.3.0/dbhome_1
+ORACLE_BASE: C:\app\oracle
+ORACLE_HOME: C:\app\oracle/product/19.3.0/dbhome_1
 ```
 
 ---
@@ -156,7 +186,7 @@ ORACLE_HOME: /u01/app/oracle/product/19.3.0/dbhome_1
        ROUND(d.bytes / 1024 / 1024, 2)     AS size_mb,
        d.autoextensible,
        ROUND(d.maxbytes / 1024 / 1024, 2)  AS maxsize_mb,
-       ROUND(d.increment_by * 8192 / 1024 / 1024, 2) AS next_mb
+       ROUND(d.inc- ent_by * 8192 / 1024 / 1024, 2) AS next_mb
    FROM dba_data_files d
    ORDER BY d.tablespace_name, d.file_name;
    ```
@@ -299,7 +329,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
 
 6. Verificar los datafiles creados en el sistema de archivos:
 
-   ```bash
+   ```cmd
    -- Desde el terminal Linux (abrir nueva sesión SSH)
    ls -lh /u01/oradata/ORCL/lab_*.dbf
    ```
@@ -315,7 +345,7 @@ LAB_AUTOALLOC_TS   ONLINE  LOCAL        SYSTEM           AUTO
 LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
 ```
 
-```bash
+```cmd
 -rw-r----- 1 oracle oinstall 104857600 Jan 15 10:23 lab_autoalloc_ts01.dbf
 -rw-r----- 1 oracle oinstall 104857600 Jan 15 10:23 lab_uniform_ts01.dbf
 -rw-r----- 1 oracle oinstall 209715200 Jan 15 10:24 lab_app_data01.dbf
@@ -383,7 +413,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
        SUBSTR(d.file_name, INSTR(d.file_name, '/', -1) + 1) AS filename,
        ROUND(d.bytes / 1024 / 1024, 2)                      AS current_mb,
        d.autoextensible                                       AS autoext,
-       ROUND(d.increment_by * 8192 / 1024 / 1024, 2)        AS next_mb,
+       ROUND(d.inc- ent_by * 8192 / 1024 / 1024, 2)        AS next_mb,
        ROUND(d.maxbytes / 1024 / 1024, 2)                   AS max_mb,
        d.status
    FROM dba_data_files d
@@ -996,19 +1026,19 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
 
 1. Verificar si hay una instancia ASM disponible en el entorno:
 
-   ```bash
+   ```cmd
    # Verificar si el proceso ASM está corriendo
    ps -ef | grep asm_pmon | grep -v grep
    ```
 
-   ```bash
+   ```cmd
    # Verificar si hay instancias de Grid Infrastructure
    /u01/app/grid/product/19.3.0/grid/bin/crsctl status resource -t 2>/dev/null || echo "Grid Infrastructure no instalado"
    ```
 
 2. **Si hay instancia ASM disponible:** Conectarse a la instancia ASM y consultar disk groups:
 
-   ```bash
+   ```cmd
    # Conectarse a la instancia ASM (requiere Grid Infrastructure instalado)
    export ORACLE_SID=+ASM
    sqlplus / as sysasm
@@ -1062,12 +1092,12 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
 
 3. **Si hay instancia ASM disponible:** Usar `asmcmd` para navegar la estructura ASM:
 
-   ```bash
+   ```cmd
    # Conectarse a asmcmd
    asmcmd -p
    ```
 
-   ```bash
+   ```cmd
    # Dentro de asmcmd, ejecutar estos comandos:
    # Listar disk groups
    lsdg
@@ -1087,9 +1117,9 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
 
 4. **Si NO hay instancia ASM disponible:** Explorar las vistas ASM conectado a la base de datos regular (mostrarán 0 filas pero la estructura es visible):
 
-   ```bash
+   ```cmd
    # Regresar a la instancia de base de datos regular
-   export ORACLE_SID=ORCL
+   set ORACLE_SID=ORCL
    sqlplus / as sysdba
    ```
 
@@ -1262,15 +1292,15 @@ El archivo físico ya existe en el sistema de archivos (posiblemente de una ejec
 
 **Solución:**
 
-```bash
-# Desde el terminal Linux, verificar si el archivo existe
+```cmd
+-  Desde el terminal Linux, verificar si el archivo existe
 ls -lh /u01/oradata/ORCL/lab_*.dbf
 
-# Si el archivo existe pero el tablespace NO existe en Oracle, eliminar el archivo
+-  Si el archivo existe pero el tablespace NO existe en Oracle, eliminar el archivo
 rm /u01/oradata/ORCL/lab_app_data01.dbf
 
-# Si tanto el archivo como el tablespace existen, primero eliminar el tablespace
-# y luego el archivo (o usar INCLUDING CONTENTS AND DATAFILES)
+-  Si tanto el archivo como el tablespace existen, primero eliminar el tablespace
+-  y luego el archivo (o usar INCLUDING CONTENTS AND DATAFILES)
 ```
 
 ```sql
@@ -1436,8 +1466,8 @@ WHERE table_name = 'V$ASM_DISKGROUP'
 ORDER BY column_id;
 ```
 
-```bash
-# Para verificar definitivamente si Grid Infrastructure está instalado:
+```cmd
+-  Para verificar definitivamente si Grid Infrastructure está instalado:
 ls /u01/app/grid/ 2>/dev/null || echo "Grid Infrastructure no instalado en /u01/app/grid"
 ls /u01/app/19.3.0/grid/ 2>/dev/null || echo "Grid Infrastructure no instalado en /u01/app/19.3.0/grid"
 ```
@@ -1494,13 +1524,13 @@ SHOW PARAMETER undo_tablespace;
 -- Debe mostrar UNDOTBS1
 ```
 
-```bash
-# Verificar que los archivos físicos fueron eliminados del sistema operativo
+```cmd
+-  Verificar que los archivos físicos fueron eliminados del sistema operativo
 ls -lh /u01/oradata/ORCL/lab_*.dbf 2>/dev/null || echo "Archivos de práctica eliminados correctamente"
 ls -lh /u01/oradata/ORCL/undotbs2*.dbf 2>/dev/null || echo "Archivo UNDOTBS2 eliminado correctamente"
 ls -lh /u01/oradata/ORCL/temp02.dbf 2>/dev/null || echo "Tempfile adicional eliminado correctamente"
 
-# Verificar espacio liberado
+-  Verificar espacio liberado
 df -h /u01
 ```
 
@@ -1552,3 +1582,4 @@ df -h /u01
 - **Oracle Database Reference 19c — DBA_TABLESPACES, DBA_DATA_FILES, DBA_SEGMENTS, DBA_EXTENTS** — Referencia de las vistas del diccionario de datos más importantes para administración de almacenamiento: [https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/](https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/)
 
 - **Oracle Support Note 1551288.1 — Tablespace Space Management Best Practices** — Disponible en My Oracle Support (MOS) para suscriptores, cubre mejores prácticas para gestión de espacio en tablespaces de producción
+
