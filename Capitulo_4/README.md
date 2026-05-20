@@ -69,7 +69,7 @@ Al completar esta práctica, serás capaz de:
 | Software | Versión | Propósito |
 |----------|---------|-----------|
 | Oracle Database | 19c (19.3+) | Motor de base de datos principal |
-| Windows | 11x o Server (8.7 o 8.8) | Sistema operativo huésped |
+| Windows | 11x o Server | Sistema operativo huésped |
 | SQL*Plus | Incluido con Oracle 19c | Ejecución de comandos SQL y DBA |
 | CMD / PowerShell | 0.79+ / nativo | Acceso - oto a la VM |
 | Oracle Grid Infrastructure (opcional) | 19c (opcional para ASM) | Instancia ASM para sección final |
