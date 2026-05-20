@@ -1,4 +1,4 @@
-# Práctica 7. Tipos de datos LOB y su Manejo en Oracle
+REM Práctica 7. Tipos de datos LOB y su Manejo en Oracle
 
 ## Metadatos
 
@@ -45,7 +45,7 @@ Al completar este laboratorio, serás capaz de:
 
 - Conexión a Oracle Database 19c como usuario `PRACTICA_USER` con privilegios `CREATE TABLE`, `CREATE DIRECTORY` (o que el DBA cree el directorio), `UNLIMITED TABLESPACE` o cuota en el tablespace de práctica.
 - Acceso como `SYSDBA` (usuario `SYS`) para crear tablespaces dedicados y objetos `DIRECTORY`.
-- Acceso SSH a la máquina virtual Oracle Linux donde reside la base de datos.
+- Acceso SSH a la máquina virtual Windows donde reside la base de datos.
 - SQL*Plus o SQL Developer disponible para ejecutar los scripts del laboratorio.
 
 ---
@@ -68,40 +68,41 @@ Al completar este laboratorio, serás capaz de:
 | Oracle Database | 19c (19.3+) | Motor de base de datos principal |
 | SQL*Plus | Incluido con 19c | Ejecución de scripts SQL y PL/SQL |
 | SQL Developer | 23.1+ | Visualización de contenido LOB y resultados |
-| Oracle Linux | 8.x | Sistema operativo huésped |
-| PuTTY / Terminal SSH | 0.79+ / nativo | Acceso remoto a la VM |
+| Windows | 8.x | Sistema operativo huésped |
+| CMD / PowerShell | 0.79+ / nativo | Acceso remoto a la VM |
 
 ### Configuración Inicial
 
 Antes de comenzar el laboratorio, verifica que la instancia Oracle esté activa y establece las variables de entorno necesarias:
 
-```bash
-# Conectarse a la VM Oracle Linux via SSH
-ssh oracle@192.168.56.101
+```cmd
+REM Conectarse a la VM Windows via SSH
+REM Acceso SSH no requerido en Windows
+REM 192.168.56.101
 
-# Verificar que la instancia esté activa
+REM Verificar que la instancia esté activa
 ps -ef | grep pmon | grep -v grep
 
-# Establecer variables de entorno Oracle
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
-export ORACLE_SID=ORCL
-export PATH=$ORACLE_HOME/bin:$PATH
+REM Establecer variables de entorno Oracle
+set ORACLE_BASE=C:\app\oracle
+set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
+set ORACLE_SID=ORCL
+set PATH=%ORACLE_HOME%\bin;%PATH%
 
-# Verificar conectividad a la base de datos
+REM Verificar conectividad a la base de datos
 sqlplus -S / as sysdba <<EOF
 SELECT instance_name, status FROM v\$instance;
 EXIT;
 EOF
 ```
 
-```bash
-# Crear el directorio del sistema de archivos para archivos LOB externos
-mkdir -p /u01/app/oracle/lob_files
-chmod 755 /u01/app/oracle/lob_files
+```cmd
+REM Crear el directorio del sistema de archivos para archivos LOB externos
+mkdir C:\app\oracle/lob_files
+chmod 755 C:\app\oracle/lob_files
 
-# Crear archivos de prueba para el laboratorio
-cat > /u01/app/oracle/lob_files/contrato_001.txt << 'ENDOFFILE'
+REM Crear archivos de prueba para el laboratorio
+cat > C:\app\oracle/lob_files/contrato_001.txt << 'ENDOFFILE'
 CONTRATO DE SERVICIOS PROFESIONALES
 =====================================
 Entre las partes: Empresa ABC S.A. de C.V. (en adelante "El Cliente")
@@ -128,7 +129,7 @@ la vigencia de este contrato y por un periodo de dos anios posterior.
 Firmado en la Ciudad de Mexico a los 15 dias del mes de enero de 2024.
 ENDOFFILE
 
-cat > /u01/app/oracle/lob_files/manual_tecnico.txt << 'ENDOFFILE'
+cat > C:\app\oracle/lob_files/manual_tecnico.txt << 'ENDOFFILE'
 MANUAL TECNICO - SISTEMA DE GESTION DOCUMENTAL v2.0
 =====================================================
 Capitulo 1: Introduccion al Sistema
@@ -154,7 +155,7 @@ Los archivos BFILE requieren respaldo independiente del SO.
 ENDOFFILE
 
 echo "Archivos de prueba creados exitosamente."
-ls -la /u01/app/oracle/lob_files/
+ls -la C:\app\oracle/lob_files/
 ```
 
 ---
@@ -169,7 +170,7 @@ ls -la /u01/app/oracle/lob_files/
 
 1. Conéctate a SQL*Plus como `SYSDBA` para crear los objetos de infraestructura necesarios:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba
    ```
 
@@ -204,7 +205,7 @@ ls -la /u01/app/oracle/lob_files/
    ```sql
    -- Crear tablespace dedicado para segmentos LOB
    CREATE TABLESPACE lob_data_ts
-       DATAFILE '/u01/app/oracle/oradata/ORCL/lob_data01.dbf'
+       DATAFILE 'C:\app\oracle/oradata/ORCL/lob_data01.dbf'
        SIZE 200M
        AUTOEXTEND ON NEXT 50M MAXSIZE 2G
        EXTENT MANAGEMENT LOCAL
@@ -226,7 +227,7 @@ ls -la /u01/app/oracle/lob_files/
 
    ```sql
    -- Crear el objeto DIRECTORY para acceso a archivos externos
-   CREATE OR REPLACE DIRECTORY dir_lob_files AS '/u01/app/oracle/lob_files';
+   CREATE OR REPLACE DIRECTORY dir_lob_files AS 'C:\app\oracle/lob_files';
 
    -- Otorgar privilegios de lectura y escritura al usuario de práctica
    GRANT READ, WRITE ON DIRECTORY dir_lob_files TO practica_user;
@@ -268,7 +269,7 @@ LOB_DATA_TS        ONLINE  LOCAL              AUTO                       200
 
 DIRECTORY_NAME     DIRECTORY_PATH
 -----------------  ------------------------------------
-DIR_LOB_FILES      /u01/app/oracle/lob_files
+DIR_LOB_FILES      C:\app\oracle/lob_files
 ```
 
 **Verificación:**
@@ -287,7 +288,7 @@ DIR_LOB_FILES      /u01/app/oracle/lob_files
 
 1. Conéctate como `PRACTICA_USER`:
 
-   ```bash
+   ```cmd
    sqlplus practica_user/Oracle123@ORCL
    ```
 
@@ -814,8 +815,8 @@ Caracteres agregados: 400
 
 1. Primero, crea algunos archivos binarios de prueba en el servidor (simulando imágenes pequeñas):
 
-   ```bash
-   # Ejecutar en el shell de Oracle Linux como usuario oracle
+   ```cmd
+   # Ejecutar en el shell de Windows como usuario oracle
    # Crear archivos binarios de prueba (simulando imágenes PNG con cabecera válida)
 
    # Crear un archivo que simula una imagen PNG (cabecera PNG + datos de relleno)
@@ -843,7 +844,7 @@ Caracteres agregados: 400
    iend_chunk = struct.pack('>I', 0) + b'IEND' + struct.pack('>I', iend_crc)
 
    # Escribir archivo PNG
-   with open('/u01/app/oracle/lob_files/imagen_producto_001.png', 'wb') as f:
+   with open('C:\app\oracle/lob_files/imagen_producto_001.png', 'wb') as f:
        f.write(png_header + ihdr_chunk + idat_chunk + iend_chunk)
 
    print('Imagen PNG creada exitosamente')
@@ -859,14 +860,14 @@ Caracteres agregados: 400
    pdf_content += b'xref\n0 4\n0000000000 65535 f\n'
    pdf_content += b'trailer\n<< /Size 4 /Root 1 0 R >>\nstartxref\n9\n%%EOF\n'
 
-   with open('/u01/app/oracle/lob_files/manual_tecnico_v2.pdf', 'wb') as f:
+   with open('C:\app\oracle/lob_files/manual_tecnico_v2.pdf', 'wb') as f:
        f.write(pdf_content)
    print('PDF creado exitosamente')
    print('Tamanio:', len(pdf_content), 'bytes')
    "
 
    # Verificar archivos creados
-   ls -lh /u01/app/oracle/lob_files/
+   ls -lh C:\app\oracle/lob_files/
    ```
 
 2. Carga el contenido de la imagen PNG al `BLOB` en la base de datos:
@@ -1680,21 +1681,21 @@ Extracto: ...4. HERRAMIENTA: Oracle Recovery Manager (RMAN)...
 El archivo físico no existe en la ruta especificada en el objeto `DIRECTORY`, o el objeto `DIRECTORY` apunta a una ruta incorrecta, o el usuario del sistema operativo `oracle` no tiene permisos de lectura sobre el directorio.
 
 **Solución:**
-```bash
-# 1. Verificar que el archivo existe en el sistema de archivos
-ls -la /u01/app/oracle/lob_files/
+```cmd
+REM 1. Verificar que el archivo existe en el sistema de archivos
+ls -la C:\app\oracle/lob_files/
 
-# 2. Verificar permisos del directorio y archivos
-ls -ld /u01/app/oracle/lob_files/
-stat /u01/app/oracle/lob_files/manual_tecnico.txt
+REM 2. Verificar permisos del directorio y archivos
+ls -ld C:\app\oracle/lob_files/
+stat C:\app\oracle/lob_files/manual_tecnico.txt
 
-# 3. Corregir permisos si es necesario
-chmod 755 /u01/app/oracle/lob_files/
-chmod 644 /u01/app/oracle/lob_files/*.txt
-chmod 644 /u01/app/oracle/lob_files/*.pdf
+REM 3. Corregir permisos si es necesario
+chmod 755 C:\app\oracle/lob_files/
+chmod 644 C:\app\oracle/lob_files/*.txt
+chmod 644 C:\app\oracle/lob_files/*.pdf
 
-# 4. Verificar que el proceso Oracle puede leer el archivo
-sudo -u oracle ls -la /u01/app/oracle/lob_files/
+REM 4. Verificar que el proceso Oracle puede leer el archivo
+sudo -u oracle ls -la C:\app\oracle/lob_files/
 ```
 
 ```sql
@@ -1704,7 +1705,7 @@ FROM dba_directories
 WHERE directory_name = 'DIR_LOB_FILES';
 
 -- 6. Si la ruta es incorrecta, recrear el directorio
-CREATE OR REPLACE DIRECTORY dir_lob_files AS '/u01/app/oracle/lob_files';
+CREATE OR REPLACE DIRECTORY dir_lob_files AS 'C:\app\oracle/lob_files';
 
 -- 7. Verificar existencia del archivo desde SQL
 DECLARE
@@ -1753,7 +1754,7 @@ GROUP BY tablespace_name;
 
 -- 4. Si el tablespace está lleno, agregar un datafile
 ALTER TABLESPACE lob_data_ts
-ADD DATAFILE '/u01/app/oracle/oradata/ORCL/lob_data02.dbf'
+ADD DATAFILE 'C:\app\oracle/oradata/ORCL/lob_data02.dbf'
 SIZE 200M AUTOEXTEND ON NEXT 50M MAXSIZE 2G;
 
 -- 5. Verificar el nuevo datafile
@@ -1909,19 +1910,19 @@ SELECT tablespace_name FROM dba_tablespaces
 WHERE tablespace_name = 'LOB_DATA_TS';
 ```
 
-```bash
-# PASO 3: Limpieza del sistema de archivos (como usuario oracle en Linux)
-# Eliminar los archivos de prueba creados durante el laboratorio
-rm -f /u01/app/oracle/lob_files/contrato_001.txt
-rm -f /u01/app/oracle/lob_files/manual_tecnico.txt
-rm -f /u01/app/oracle/lob_files/manual_tecnico_v2.pdf
-rm -f /u01/app/oracle/lob_files/imagen_producto_001.png
+```cmd
+REM PASO 3: Limpieza del sistema de archivos (como usuario oracle en Linux)
+REM Eliminar los archivos de prueba creados durante el laboratorio
+rm -f C:\app\oracle/lob_files/contrato_001.txt
+rm -f C:\app\oracle/lob_files/manual_tecnico.txt
+rm -f C:\app\oracle/lob_files/manual_tecnico_v2.pdf
+rm -f C:\app\oracle/lob_files/imagen_producto_001.png
 
-# Verificar que el directorio está vacío
-ls -la /u01/app/oracle/lob_files/
+REM Verificar que el directorio está vacío
+ls -la C:\app\oracle/lob_files/
 
-# Opcionalmente eliminar el directorio
-rmdir /u01/app/oracle/lob_files/
+REM Opcionalmente eliminar el directorio
+rmdir C:\app\oracle/lob_files/
 
 echo "Limpieza del laboratorio completada."
 ```
