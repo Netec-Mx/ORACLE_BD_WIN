@@ -71,7 +71,7 @@ Al completar esta práctica, serás capaz de:
 | Oracle Database | 19c (19.3+) | Motor de base de datos principal |
 | Windows | 11x o Server | Sistema operativo huésped |
 | SQL*Plus | Incluido con Oracle 19c | Ejecución de comandos SQL y DBA |
-| CMD / PowerShell | 0.79+ / nativo | Acceso - oto a la VM |
+| CMD / PowerShell | nativo | Acceso - a la VM |
 | Oracle Grid Infrastructure (opcional) | 19c (opcional para ASM) | Instancia ASM para sección final |
 
 ### Configuración Inicial
@@ -330,7 +330,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
 6. Verificar los datafiles creados en el sistema de archivos:
 
    ```cmd
-   -- Desde el terminal Linux (abrir nueva sesión SSH)
+   -- Desde el terminal Windows (abrir nueva sesión SSH)
    dir C:\app\oracle\oradata\ORCL\lab_*.dbf
    ```
 
@@ -1293,7 +1293,7 @@ El archivo físico ya existe en el sistema de archivos (posiblemente de una ejec
 **Solución:**
 
 ```cmd
--  Desde el terminal Linux, verificar si el archivo existe
+-  Desde el terminal Windows, verificar si el archivo existe
 dir C:\app\oracle\oradata\ORCL\lab_*.dbf
 
 -  Si el archivo existe pero el tablespace NO existe en Oracle, eliminar el archivo
