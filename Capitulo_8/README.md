@@ -1,4 +1,4 @@
-# Práctica 8. Temas Misceláneos DBCS y Multitenant
+REM Práctica 8. Temas Misceláneos DBCS y Multitenant
 
 ## Metadatos
 
@@ -43,11 +43,11 @@ Al completar este laboratorio, serás capaz de:
 
 ### Acceso Requerido
 
-- Acceso a Oracle Database 19c o 21c instalada en Oracle Linux 8.x (máquina virtual o servidor dedicado)
+- Acceso a Oracle Database 19c o 21c instalada en Windows 8.x (máquina virtual o servidor dedicado)
 - Usuario del sistema operativo `oracle` con variables de entorno configuradas (`ORACLE_SID`, `ORACLE_HOME`, `PATH`)
 - La base de datos **debe estar en modo ARCHIVELOG** antes de iniciar la Parte 3 del laboratorio
 - Acceso SSH a la máquina virtual (PuTTY o terminal nativo)
-- Espacio en disco mínimo de 10 GB disponible para respaldos RMAN en el directorio `/home/oracle/backup_rman`
+- Espacio en disco mínimo de 10 GB disponible para respaldos RMAN en el directorio `C:\lab/backup_rman`
 
 ---
 
@@ -58,7 +58,7 @@ Al completar este laboratorio, serás capaz de:
 | Componente | Especificación |
 |------------|----------------|
 | CPU | Intel Core i5 8va gen o AMD Ryzen 5 (mínimo) |
-| RAM | 16 GB mínimo (8 GB asignados a la VM Oracle Linux) |
+| RAM | 16 GB mínimo (8 GB asignados a la VM Windows) |
 | Almacenamiento | 20 GB libres para datafiles + 10 GB para respaldos RMAN |
 | Red | Adaptador loopback activo para conexiones locales Oracle Net |
 
@@ -67,39 +67,40 @@ Al completar este laboratorio, serás capaz de:
 | Software | Versión | Propósito |
 |----------|---------|-----------|
 | Oracle Database | 19c (19.3+) o 21c | Motor principal de base de datos |
-| Oracle Linux | 8.x (8.7 o 8.8) | Sistema operativo huésped |
+| Windows | 8.x (8.7 o 8.8) | Sistema operativo huésped |
 | SQL*Plus | Incluido con Oracle DB | Administración y consultas |
 | Oracle RMAN | Incluido con Oracle DB | Respaldo y recuperación |
-| PuTTY / Terminal SSH | PuTTY 0.79+ o nativo | Acceso remoto a la VM |
+| CMD / PowerShell | PuTTY 0.79+ o nativo | Acceso remoto a la VM |
 
 ### Configuración Inicial
 
-Antes de iniciar el laboratorio, conectarse a la máquina virtual Oracle Linux y verificar el entorno:
+Antes de iniciar el laboratorio, conectarse a la máquina virtual Windows y verificar el entorno:
 
-```bash
-# Conectarse a la VM por SSH
-ssh oracle@192.168.56.101
+```cmd
+REM Conectarse a la VM por SSH
+REM Acceso SSH no requerido en Windows
+REM 192.168.56.101
 
-# Verificar variables de entorno Oracle
+REM Verificar variables de entorno Oracle
 echo "ORACLE_SID: $ORACLE_SID"
 echo "ORACLE_HOME: $ORACLE_HOME"
 echo "PATH: $PATH"
 
-# Si las variables no están configuradas, cargarlas manualmente
-export ORACLE_SID=ORCL
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=/u01/app/oracle/product/19.3.0/dbhome_1
-export PATH=$ORACLE_HOME/bin:$PATH
+REM Si las variables no están configuradas, cargarlas manualmente
+set ORACLE_SID=ORCL
+set ORACLE_BASE=C:\app\oracle
+set ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
+set PATH=%ORACLE_HOME%\bin;%PATH%
 
-# Verificar que la instancia Oracle está activa
+REM Verificar que la instancia Oracle está activa
 ps -ef | grep pmon | grep -v grep
 
-# Crear directorio para respaldos RMAN
-mkdir -p /home/oracle/backup_rman
-chmod 755 /home/oracle/backup_rman
+REM Crear directorio para respaldos RMAN
+mkdir C:\lab/backup_rman
+chmod 755 C:\lab/backup_rman
 
-# Verificar espacio disponible en disco
-df -h /home/oracle/backup_rman
+REM Verificar espacio disponible en disco
+df -h C:\lab/backup_rman
 df -h /u01
 ```
 
@@ -107,7 +108,7 @@ df -h /u01
 
 ```
 ORACLE_SID: ORCL
-ORACLE_HOME: /u01/app/oracle/product/19.3.0/dbhome_1
+ORACLE_HOME: C:\app\oracle/product/19.3.0/dbhome_1
 oracle    1234     1  0 08:00 ?  00:00:00 ora_pmon_ORCL
 ```
 
@@ -131,7 +132,7 @@ oracle    1234     1  0 08:00 ?  00:00:00 ora_pmon_ORCL
 
 2. Conectarse a SQL*Plus como SYSDBA y verificar la versión de Oracle instalada, lo que representa la misma versión disponible en Oracle DBCS:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba
    ```
 
@@ -173,7 +174,7 @@ NAME                          VALUE
 db_name                       ORCL
 enable_pluggable_database     TRUE
 log_archive_dest_1            USE_DB_RECOVERY_FILE_DEST
-db_recovery_file_dest         /u01/app/oracle/fast_recovery_area
+db_recovery_file_dest         C:\app\oracle/fast_recovery_area
 ```
 
 **Verificación:**
@@ -297,8 +298,8 @@ CON_ID  PDB_NAME    STATUS   LOGGING
      ADMIN USER pdb_admin IDENTIFIED BY Oracle123
      ROLES = (DBA)
      FILE_NAME_CONVERT = (
-       '/u01/app/oracle/oradata/ORCL/pdbseed/',
-       '/u01/app/oracle/oradata/ORCL/LAB08_PDB/'
+       'C:\app\oracle/oradata/ORCL/pdbseed/',
+       'C:\app\oracle/oradata/ORCL/LAB08_PDB/'
      );
 
    -- Abrir la nueva PDB recién creada
@@ -527,7 +528,7 @@ ID  MODELO  DESCRIPCION                                    PROVEEDOR
 
 3. Salir de SQL*Plus y conectarse a RMAN para configurar los parámetros de respaldo:
 
-   ```bash
+   ```cmd
    # Salir de SQL*Plus
    EXIT
 
@@ -537,12 +538,12 @@ ID  MODELO  DESCRIPCION                                    PROVEEDOR
 
 4. Dentro de RMAN, configurar los parámetros fundamentales:
 
-   ```bash
+   ```cmd
    # Verificar la configuración actual de RMAN
    SHOW ALL;
 
    # Configurar la ubicación de los respaldos (Fast Recovery Area)
-   CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT '/home/oracle/backup_rman/%U';
+   CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT 'C:\lab/backup_rman/%U';
 
    # Configurar política de retención: mantener respaldos por 7 días
    CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 7 DAYS;
@@ -553,7 +554,7 @@ ID  MODELO  DESCRIPCION                                    PROVEEDOR
    # Configurar respaldo automático del control file
    CONFIGURE CONTROLFILE AUTOBACKUP ON;
    CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK 
-     TO '/home/oracle/backup_rman/cf_%F';
+     TO 'C:\lab/backup_rman/cf_%F';
 
    # Configurar paralelismo (1 canal para entorno de laboratorio)
    CONFIGURE DEVICE TYPE DISK PARALLELISM 1 BACKUP TYPE TO BACKUPSET;
@@ -582,8 +583,8 @@ CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 7 DAYS;
 CONFIGURE BACKUP OPTIMIZATION OFF; # default
 CONFIGURE DEFAULT DEVICE TYPE TO DISK; # default
 CONFIGURE CONTROLFILE AUTOBACKUP ON;
-CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '/home/oracle/backup_rman/cf_%F';
-CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT   '/home/oracle/backup_rman/%U';
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO 'C:\lab/backup_rman/cf_%F';
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT   'C:\lab/backup_rman/%U';
 CONFIGURE COMPRESSION ALGORITHM 'MEDIUM';
 ```
 
@@ -603,7 +604,7 @@ CONFIGURE COMPRESSION ALGORITHM 'MEDIUM';
 
 1. Desde la sesión RMAN (si salió, reconectarse con `rman target /`), ejecutar el respaldo completo:
 
-   ```bash
+   ```cmd
    # Respaldo completo de la base de datos + archive logs
    # Equivale al respaldo automático que Oracle DBCS ejecuta diariamente
    BACKUP AS COMPRESSED BACKUPSET 
@@ -614,7 +615,7 @@ CONFIGURE COMPRESSION ALGORITHM 'MEDIUM';
 
 2. Verificar el respaldo ejecutado con LIST BACKUP:
 
-   ```bash
+   ```cmd
    # Listar todos los respaldos disponibles
    LIST BACKUP SUMMARY;
 
@@ -622,12 +623,12 @@ CONFIGURE COMPRESSION ALGORITHM 'MEDIUM';
    LIST BACKUP TAG 'FULL_BACKUP_LAB08';
 
    # Ver el contenido del directorio de respaldos
-   HOST 'ls -lh /home/oracle/backup_rman/';
+   HOST 'ls -lh C:\lab/backup_rman/';
    ```
 
 3. Validar la integridad del respaldo (simula la verificación automática de DBCS):
 
-   ```bash
+   ```cmd
    # Verificar que los respaldos son válidos y no están corruptos
    VALIDATE BACKUPSET ALL;
 
@@ -645,8 +646,8 @@ Starting backup at 15-JUN-2024 10:30:00
 using channel ORA_DISK_1
 channel ORA_DISK_1: starting compressed full datafile backup set
 channel ORA_DISK_1: specifying datafile(s) in backup set
-input datafile file number=00001 name=/u01/app/oracle/oradata/ORCL/system01.dbf
-input datafile file number=00003 name=/u01/app/oracle/oradata/ORCL/sysaux01.dbf
+input datafile file number=00001 name=C:\app\oracle/oradata/ORCL/system01.dbf
+input datafile file number=00003 name=C:\app\oracle/oradata/ORCL/sysaux01.dbf
 ...
 channel ORA_DISK_1: backup set complete, elapsed time: 00:02:15
 Finished backup at 15-JUN-2024 10:32:15
@@ -678,7 +679,7 @@ validated 2 objects
 
 1. Ejecutar un respaldo incremental de nivel 0 (base para la estrategia incremental):
 
-   ```bash
+   ```cmd
    # Respaldo incremental nivel 0 (captura todos los bloques usados)
    # Es la base sobre la que se aplican los incrementales nivel 1
    BACKUP INCREMENTAL LEVEL 0 
@@ -692,7 +693,7 @@ validated 2 objects
 
 2. Simular actividad en la base de datos (para que el incremental nivel 1 tenga cambios que capturar):
 
-   ```bash
+   ```cmd
    # Ejecutar comandos SQL desde RMAN usando HOST o SQL
    SQL "ALTER SESSION SET CONTAINER = LAB08_PDB";
    
@@ -713,7 +714,7 @@ validated 2 objects
 
 3. Ejecutar el respaldo incremental de nivel 1 (captura solo los bloques modificados desde el nivel 0):
 
-   ```bash
+   ```cmd
    # Respaldo incremental nivel 1 diferencial
    # Solo captura bloques modificados desde el último nivel 0 o nivel 1
    BACKUP INCREMENTAL LEVEL 1 
@@ -769,7 +770,7 @@ Key  TY LV S Device Type Completion Time    #Pieces Tag
 
 1. Desde SQL*Plus, identificar los datafiles de LAB08_PDB para seleccionar el que se simulará como perdido:
 
-   ```bash
+   ```cmd
    # Abrir una segunda sesión de terminal o salir de RMAN temporalmente
    # Conectarse a SQL*Plus
    sqlplus / as sysdba
@@ -797,26 +798,26 @@ Key  TY LV S Device Type Completion Time    #Pieces Tag
 
 3. Desde el sistema operativo, renombrar el datafile para simular su pérdida (NO eliminar permanentemente):
 
-   ```bash
+   ```cmd
    # Salir de SQL*Plus
    EXIT
    ```
 
-   ```bash
+   ```cmd
    # Identificar la ruta exacta del datafile de LAB08_PDB
-   ls -la /u01/app/oracle/oradata/ORCL/LAB08_PDB/
+   ls -la C:\app\oracle/oradata/ORCL/LAB08_PDB/
 
    # Renombrar el datafile para simular pérdida (ajustar el nombre según el output anterior)
-   mv /u01/app/oracle/oradata/ORCL/LAB08_PDB/system01.dbf \
-      /home/oracle/system01.dbf.PERDIDO
+   mv C:\app\oracle/oradata/ORCL/LAB08_PDB/system01.dbf \
+      C:\lab/system01.dbf.PERDIDO
 
    # Verificar que el archivo ya no está en su ubicación original
-   ls -la /u01/app/oracle/oradata/ORCL/LAB08_PDB/
+   ls -la C:\app\oracle/oradata/ORCL/LAB08_PDB/
    ```
 
 4. Intentar abrir la PDB para confirmar el error de archivo faltante:
 
-   ```bash
+   ```cmd
    sqlplus / as sysdba
    ```
 
@@ -828,7 +829,7 @@ Key  TY LV S Device Type Completion Time    #Pieces Tag
 
 5. Ejecutar la recuperación completa con RMAN:
 
-   ```bash
+   ```cmd
    -- Salir de SQL*Plus
    EXIT
 
@@ -836,7 +837,7 @@ Key  TY LV S Device Type Completion Time    #Pieces Tag
    rman target /
    ```
 
-   ```bash
+   ```cmd
    # Restaurar y recuperar la PDB completa
    # Este proceso simula la recuperación automática de Oracle DBCS
    
@@ -852,7 +853,7 @@ Key  TY LV S Device Type Completion Time    #Pieces Tag
 
 6. Verificar la integridad de los datos después de la recuperación:
 
-   ```bash
+   ```cmd
    # Conectarse a SQL*Plus para verificar los datos
    sqlplus / as sysdba
    ```
@@ -877,16 +878,16 @@ Key  TY LV S Device Type Completion Time    #Pieces Tag
 ```sql
 -- Antes de la recuperación (error esperado):
 ORA-01157: cannot identify/lock data file 7 - see DBWR trace file
-ORA-01110: data file 7: '/u01/app/oracle/oradata/ORCL/LAB08_PDB/system01.dbf'
+ORA-01110: data file 7: 'C:\app\oracle/oradata/ORCL/LAB08_PDB/system01.dbf'
 ```
 
 ```
 -- Durante la recuperación RMAN:
 Starting restore at 15-JUN-2024 11:00:00
 using channel ORA_DISK_1
-channel ORA_DISK_1: restoring datafile 00007 to /u01/app/oracle/oradata/ORCL/LAB08_PDB/system01.dbf
-channel ORA_DISK_1: reading from backup piece /home/oracle/backup_rman/...
-channel ORA_DISK_1: piece handle=/home/oracle/backup_rman/... tag=INC0_BACKUP_LAB08
+channel ORA_DISK_1: restoring datafile 00007 to C:\app\oracle/oradata/ORCL/LAB08_PDB/system01.dbf
+channel ORA_DISK_1: reading from backup piece C:\lab/backup_rman/...
+channel ORA_DISK_1: piece handle=C:\lab/backup_rman/... tag=INC0_BACKUP_LAB08
 channel ORA_DISK_1: restored backup piece 1
 Finished restore at 15-JUN-2024 11:01:30
 
@@ -952,7 +953,7 @@ ID  MODELO    DESCRIPCION
 
 2. Verificar el inventario completo de respaldos RMAN:
 
-   ```bash
+   ```cmd
    rman target /
    LIST BACKUP SUMMARY;
    CROSSCHECK BACKUP;
@@ -970,8 +971,8 @@ ID  MODELO    DESCRIPCION
 
 4. Verificar que no hay errores recientes en el alert log:
 
-   ```bash
-   tail -50 /u01/app/oracle/diag/rdbms/orcl/ORCL/trace/alert_ORCL.log | grep -i "ORA-"
+   ```cmd
+   tail -50 C:\app\oracle/diag/rdbms/orcl/ORCL/trace/alert_ORCL.log | grep -i "ORA-"
    ```
    **Resultado Esperado:** Sin errores ORA- críticos relacionados con el laboratorio
 
@@ -1053,36 +1054,36 @@ ALTER SESSION SET "_oracle_script" = FALSE;
 - Error: `RMAN-06026: some targets not found - aborting restore`
 
 **Causa:**
-Los archivos físicos de respaldo fueron movidos, eliminados o el directorio `/home/oracle/backup_rman/` no tiene los permisos correctos para el usuario `oracle`.
+Los archivos físicos de respaldo fueron movidos, eliminados o el directorio `C:\lab/backup_rman/` no tiene los permisos correctos para el usuario `oracle`.
 
 **Solución:**
 
-```bash
-# Verificar que los archivos físicos existen
-ls -la /home/oracle/backup_rman/
+```cmd
+REM Verificar que los archivos físicos existen
+ls -la C:\lab/backup_rman/
 
-# Verificar permisos del directorio
-ls -ld /home/oracle/backup_rman/
+REM Verificar permisos del directorio
+ls -ld C:\lab/backup_rman/
 
-# Corregir permisos si es necesario
-chmod 755 /home/oracle/backup_rman/
-chown oracle:oinstall /home/oracle/backup_rman/
+REM Corregir permisos si es necesario
+chmod 755 C:\lab/backup_rman/
+chown oracle:oinstall C:\lab/backup_rman/
 
-# Si los archivos fueron movidos, catalogarlos nuevamente en RMAN
+REM Si los archivos fueron movidos, catalogarlos nuevamente en RMAN
 rman target /
 ```
 
-```bash
-# Dentro de RMAN, catalogar los archivos desde su nueva ubicación
-CATALOG START WITH '/home/oracle/backup_rman/';
+```cmd
+REM Dentro de RMAN, catalogar los archivos desde su nueva ubicación
+CATALOG START WITH 'C:\lab/backup_rman/';
 
-# Actualizar el estado de los backupsets
+REM Actualizar el estado de los backupsets
 CROSSCHECK BACKUP;
 
-# Eliminar registros de respaldos que ya no existen físicamente
+REM Eliminar registros de respaldos que ya no existen físicamente
 DELETE EXPIRED BACKUP;
 
-# Ejecutar un nuevo respaldo completo si los archivos se perdieron definitivamente
+REM Ejecutar un nuevo respaldo completo si los archivos se perdieron definitivamente
 BACKUP AS COMPRESSED BACKUPSET DATABASE PLUS ARCHIVELOG TAG 'RECOVERY_BACKUP';
 ```
 
@@ -1099,13 +1100,13 @@ La ruta especificada en `FILE_NAME_CONVERT` no existe o el usuario oracle no tie
 
 **Solución:**
 
-```bash
-# Verificar y crear el directorio destino
-mkdir -p /u01/app/oracle/oradata/ORCL/LAB08_PDB/
-chown oracle:oinstall /u01/app/oracle/oradata/ORCL/LAB08_PDB/
-chmod 755 /u01/app/oracle/oradata/ORCL/LAB08_PDB/
+```cmd
+REM Verificar y crear el directorio destino
+mkdir C:\app\oracle/oradata/ORCL/LAB08_PDB/
+chown oracle:oinstall C:\app\oracle/oradata/ORCL/LAB08_PDB/
+chmod 755 C:\app\oracle/oradata/ORCL/LAB08_PDB/
 
-# Verificar la ruta real de PDB$SEED para usar en FILE_NAME_CONVERT
+REM Verificar la ruta real de PDB$SEED para usar en FILE_NAME_CONVERT
 ```
 
 ```sql
@@ -1118,8 +1119,8 @@ CREATE PLUGGABLE DATABASE LAB08_PDB
   ADMIN USER pdb_admin IDENTIFIED BY Oracle123
   ROLES = (DBA)
   FILE_NAME_CONVERT = (
-    '/u01/app/oracle/oradata/ORCL/pdbseed/',
-    '/u01/app/oracle/oradata/ORCL/LAB08_PDB/'
+    'C:\app\oracle/oradata/ORCL/pdbseed/',
+    'C:\app\oracle/oradata/ORCL/LAB08_PDB/'
   );
 ```
 
@@ -1146,33 +1147,33 @@ SELECT CON_ID, NAME FROM V$PDBS ORDER BY CON_ID;
 EXIT
 ```
 
-```bash
-# Conectarse a RMAN para limpiar los respaldos del laboratorio
+```cmd
+REM Conectarse a RMAN para limpiar los respaldos del laboratorio
 rman target /
 ```
 
-```bash
-# Eliminar todos los respaldos del laboratorio (opcional, libera espacio en disco)
-# PRECAUCIÓN: Solo ejecutar si no se necesitan estos respaldos para recuperación futura
+```cmd
+REM Eliminar todos los respaldos del laboratorio (opcional, libera espacio en disco)
+REM PRECAUCIÓN: Solo ejecutar si no se necesitan estos respaldos para recuperación futura
 DELETE BACKUP TAG 'FULL_BACKUP_LAB08';
 DELETE BACKUP TAG 'INC0_BACKUP_LAB08';
 DELETE BACKUP TAG 'INC1_BACKUP_LAB08';
 
-# Confirmar eliminación cuando RMAN lo solicite (ingresar YES)
+REM Confirmar eliminación cuando RMAN lo solicite (ingresar YES)
 EXIT
 ```
 
-```bash
-# Limpiar archivos temporales del sistema operativo
-# Restaurar el datafile que fue renombrado durante la simulación de pérdida
-# (si no fue restaurado por RMAN automáticamente)
-ls -la /home/oracle/*.PERDIDO 2>/dev/null && \
+```cmd
+REM Limpiar archivos temporales del sistema operativo
+REM Restaurar el datafile que fue renombrado durante la simulación de pérdida
+REM (si no fue restaurado por RMAN automáticamente)
+ls -la C:\lab/*.PERDIDO 2>/dev/null && \
   echo "Archivo de simulación encontrado - verificar si RMAN ya lo restauró"
 
-# Limpiar el directorio de respaldos si se eliminaron desde RMAN
-rm -f /home/oracle/backup_rman/*.bkp 2>/dev/null
-rm -f /home/oracle/backup_rman/cf_* 2>/dev/null
-ls -la /home/oracle/backup_rman/
+REM Limpiar el directorio de respaldos si se eliminaron desde RMAN
+rm -f C:\lab/backup_rman/*.bkp 2>/dev/null
+rm -f C:\lab/backup_rman/cf_* 2>/dev/null
+ls -la C:\lab/backup_rman/
 ```
 
 > ⚠️ **Advertencia:** El comando `DROP PLUGGABLE DATABASE ... INCLUDING DATAFILES` elimina permanentemente los datafiles del sistema de archivos. Asegurarse de que no se necesita la PDB `LAB08_PDB` antes de ejecutar este comando. En un entorno de producción, siempre tomar un respaldo previo antes de eliminar cualquier PDB.
@@ -1215,5 +1216,4 @@ ls -la /home/oracle/backup_rman/
 - **Oracle Cloud Infrastructure – Database Cloud Service Documentation** — Documentación oficial del servicio DBCS en OCI, incluyendo aprovisionamiento, respaldo automático y configuración de alta disponibilidad. Disponible en: [https://docs.oracle.com/en-us/iaas/Content/Database/home.htm](https://docs.oracle.com/en-us/iaas/Content/Database/home.htm)
 - **NIST SP 800-145: The NIST Definition of Cloud Computing** — Definición formal y estándar de los modelos de servicio (IaaS, PaaS, SaaS) y modelos de implementación (pública, privada, híbrida) utilizados como referencia en este laboratorio. Disponible en: [https://csrc.nist.gov/publications/detail/sp/800-145/final](https://csrc.nist.gov/publications/detail/sp/800-145/final)
 - **Oracle University – Oracle Database 19c: Backup and Recovery Workshop** — Curso oficial de Oracle que profundiza en todas las capacidades de RMAN incluyendo recuperación de medios, catalog RMAN y configuraciones avanzadas. Disponible en: [https://education.oracle.com](https://education.oracle.com)
-
 
