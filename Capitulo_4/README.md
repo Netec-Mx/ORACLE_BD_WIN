@@ -331,7 +331,7 @@ USERS              ONLINE     5.00     1.25     3.75     75.0
 
    ```cmd
    -- Desde el terminal Linux (abrir nueva sesión SSH)
-   ls -lh C:\app\oracle\oradata\ORCL\lab_*.dbf
+   dir C:\app\oracle\oradata\ORCL\lab_*.dbf
    ```
 
 **Salida Esperada:**
@@ -465,7 +465,7 @@ LAB_APP_IDX_TS              2    200.00         1524.00
 - `LAB_APP_DATA_TS` debe tener 2 datafiles con un total de 450 MB
 - `LAB_APP_IDX_TS` debe tener 2 datafiles, ambos con `AUTOEXT = YES`
 - El datafile `lab_app_data01.dbf` debe mostrar 300 MB (después del RESIZE)
-- Confirmar los tamaños en el sistema operativo: `ls -lh C:\app\oracle\oradata\ORCL\lab_app*.dbf`
+- Confirmar los tamaños en el sistema operativo: `dir C:\app\oracle\oradata\ORCL\lab_app*.dbf`
 
 ---
 
@@ -1294,7 +1294,7 @@ El archivo físico ya existe en el sistema de archivos (posiblemente de una ejec
 
 ```cmd
 -  Desde el terminal Linux, verificar si el archivo existe
-ls -lh C:\app\oracle\oradata\ORCL\lab_*.dbf
+dir C:\app\oracle\oradata\ORCL\lab_*.dbf
 
 -  Si el archivo existe pero el tablespace NO existe en Oracle, eliminar el archivo
 rm C:\app\oracle\oradata\ORCL\lab_app_data01.dbf
@@ -1526,9 +1526,9 @@ SHOW PARAMETER undo_tablespace;
 
 ```cmd
 -  Verificar que los archivos físicos fueron eliminados del sistema operativo
-ls -lh C:\app\oracle\oradata\ORCL\lab_*.dbf 2>/dev/null || echo "Archivos de práctica eliminados correctamente"
-ls -lh C:\app\oracle\oradata\ORCL\undotbs2*.dbf 2>/dev/null || echo "Archivo UNDOTBS2 eliminado correctamente"
-ls -lh C:\app\oracle\oradata\ORCL\temp02.dbf 2>/dev/null || echo "Tempfile adicional eliminado correctamente"
+dir C:\app\oracle\oradata\ORCL\lab_*.dbf 2>/dev/null || echo "Archivos de práctica eliminados correctamente"
+dir C:\app\oracle\oradata\ORCL\undotbs2*.dbf 2>/dev/null || echo "Archivo UNDOTBS2 eliminado correctamente"
+dir C:\app\oracle\oradata\ORCL\temp02.dbf 2>/dev/null || echo "Tempfile adicional eliminado correctamente"
 
 -  Verificar espacio liberado
 df -h /u01
