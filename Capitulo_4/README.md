@@ -186,7 +186,7 @@ ORACLE_HOME: C:\app\oracle/product/19.3.0/dbhome_1
        ROUND(d.bytes / 1024 / 1024, 2)     AS size_mb,
        d.autoextensible,
        ROUND(d.maxbytes / 1024 / 1024, 2)  AS maxsize_mb,
-       ROUND(d.inc- ent_by * 8192 / 1024 / 1024, 2) AS next_mb
+       ROUND(d.increment_by * 8192 / 1024 / 1024, 2) AS next_mb
    FROM dba_data_files d
    ORDER BY d.tablespace_name, d.file_name;
    ```
@@ -346,10 +346,14 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
 ```
 
 ```cmd
-lab_autoalloc_ts01.dbf
-lab_uniform_ts01.dbf
-lab_app_data01.dbf
-lab_app_idx01.dbf
+ Directory of C:\app\oracle\oradata\ORCL
+
+05/20/2026  07:22 PM       209,723,392 LAB_APP_DATA01.DBF
+05/20/2026  07:22 PM       104,865,792 LAB_APP_IDX01.DBF
+05/20/2026  07:22 PM       104,865,792 LAB_AUTOALLOC_TS01.DBF
+05/20/2026  07:22 PM       104,865,792 LAB_UNIFORM_TS01.DBF
+               4 File(s)    524,320,768 bytes
+               0 Dir(s)  96,471,670,784 bytes free
 ```
 
 **Verificación:**
