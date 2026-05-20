@@ -1024,16 +1024,11 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
 
 **Instrucciones:**
 
-1. Verificar si hay una instancia ASM disponible en el entorno:
-
-   ```cmd
-   # Verificar si el proceso ASM está corriendo
-   ps -ef | grep asm_pmon | grep -v grep
-   ```
+1. (Opcional) Verificar si hay una instancia ASM disponible en el entorno:
 
    ```cmd
    # Verificar si hay instancias de Grid Infrastructure
-   /u01/app/grid/product/19.3.0/grid/bin/crsctl status resource -t 2>/dev/null || echo "Grid Infrastructure no instalado"
+crsctl status resource -t 2>/dev/null || echo "Grid Infrastructure no instalado"
    ```
 
 2. (Opcional) **Si hay instancia ASM disponible:** Conectarse a la instancia ASM y consultar disk groups:
@@ -1468,8 +1463,7 @@ ORDER BY column_id;
 
 ```cmd
 -  Para verificar definitivamente si Grid Infrastructure está instalado:
-ls /u01/app/grid/ 2>/dev/null || echo "Grid Infrastructure no instalado en /u01/app/grid"
-ls /u01/app/19.3.0/grid/ 2>/dev/null || echo "Grid Infrastructure no instalado en /u01/app/19.3.0/grid"
+dir C:\app\grid/ 2>/dev/null || echo "Grid Infrastructure no instalado en /u01/app/grid"
 ```
 
 > **Nota para el instructor:** Si el entorno no tiene ASM, esta sección puede completarse de forma conceptual documentando la estructura de las vistas y los comandos `asmcmd` que se usarían. El objetivo de aprendizaje se cumple al comprender la arquitectura ASM aunque no se ejecuten los comandos en vivo.
