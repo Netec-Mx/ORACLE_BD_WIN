@@ -123,7 +123,8 @@ cd C:\lab03
    ```cmd
    sqlplus / as sysdba
    ```
-
+   
+  ```sql
    -- Crear tablespace dedicado para la práctica
    CREATE TABLESPACE practice_ts
        DATAFILE 'C:\app\oracle\oradata\ORCL\practice_ts01.dbf'
@@ -138,7 +139,7 @@ cd C:\lab03
    WHERE  tablespace_name = 'PRACTICE_TS';
    ```
 
-3. Crea también una tabla de datos sensibles que usaos para las pruebas de privilegios:
+3. Crea también una tabla de datos sensibles que usaremos para las pruebas de privilegios:
 
    ```sql
    -- Crear tabla de prueba como SYSTEM en ORCL
