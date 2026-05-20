@@ -47,9 +47,9 @@ Al completar esta práctica, serás capaz de:
 
 - Conexión SSH a la máquina virtual Windows 11x o Server
 - Acceso a SQL*Plus como `SYS` con rol `SYSDBA` o como `SYSTEM`
-- Usuario de práctica `PRACTICA_USER` creado en prácticas anteriores con privilegios `DBA` o equivalentes
-- Al menos **5 GB de espacio libre en disco** en la partición donde residen los datafiles (generalmente `/u01`)
-- Acceso al sistema operativo como usuario `oracle` para verificar archivos físicos
+- Usuario de práctica  creado en prácticas anteriores con privilegios `DBA` o equivalentes
+- Al menos **5 GB de espacio libre en disco** en la partición donde residen los datafiles 
+- Acceso al sistema operativo como usuario `oracle` para verificar archivos físicos o que pertencezca al grupo ORA_DBA.
 
 ---
 
@@ -82,7 +82,7 @@ Antes de comenzar, verificar que la instancia Oracle esté activa y que exista e
 -  Conectarse a la VM Windows via RDP o SSH
 -  Verificar que la instancia Oracle esté activa
 sqlplus / as sysdba
-SELECT instance_name, status, version FROM v\$instance;
+SELECT instance_name, status, version FROM v$instance;
 EXIT;
 
 -  Verificar espacio disponible en el sistema de archivos
