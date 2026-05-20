@@ -114,11 +114,11 @@ cd C:\lab03
 
 ## Paso 1: Crear el Tablespace de Práctica y Preparar el Entorno
 
-**Objetivo:** Crear un tablespace dedicado `PRACTICE_TS` en la PDB para almacenar los objetos de esta práctica, siguiendo la recomendación de aislamiento del entorno de laboratorio.
+**Objetivo:** Crear un tablespace dedicado `PRACTICE_TS`  para lmacenar los objetos de esta práctica, siguiendo la recomendación de aislamiento del entorno de laboratorio.
 
 **Instrucciones:**
 
-1. Conéctate a SQL*Plus como SYSDBA y cambia al contenedor PDB:
+1. Conéctate a SQL*Plus como SYSDBA:
 
    ```cmd
    sqlplus / as sysdba
