@@ -45,7 +45,7 @@ Al completar esta práctica, serás capaz de:
 
 ### Acceso Requerido
 
-- Conexión SSH a la máquina virtual Windows 11x o Server
+- Conexión RDP o SSH a la máquina virtual Windows 11x o Server
 - Acceso a SQL*Plus como `SYS` con rol `SYSDBA` o como `SYSTEM`
 - Usuario de práctica  creado en prácticas anteriores con privilegios `DBA` o equivalentes
 - Al menos **5 GB de espacio libre en disco** en la partición donde residen los datafiles 
@@ -346,10 +346,10 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
 ```
 
 ```cmd
--rw-r----- 1 oracle oinstall 104857600 Jan 15 10:23 lab_autoalloc_ts01.dbf
--rw-r----- 1 oracle oinstall 104857600 Jan 15 10:23 lab_uniform_ts01.dbf
--rw-r----- 1 oracle oinstall 209715200 Jan 15 10:24 lab_app_data01.dbf
--rw-r----- 1 oracle oinstall 104857600 Jan 15 10:24 lab_app_idx01.dbf
+lab_autoalloc_ts01.dbf
+lab_uniform_ts01.dbf
+lab_app_data01.dbf
+lab_app_idx01.dbf
 ```
 
 **Verificación:**
@@ -1036,7 +1036,7 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
    /u01/app/grid/product/19.3.0/grid/bin/crsctl status resource -t 2>/dev/null || echo "Grid Infrastructure no instalado"
    ```
 
-2. **Si hay instancia ASM disponible:** Conectarse a la instancia ASM y consultar disk groups:
+2. (Opcional) **Si hay instancia ASM disponible:** Conectarse a la instancia ASM y consultar disk groups:
 
    ```cmd
    # Conectarse a la instancia ASM (requiere Grid Infrastructure instalado)
@@ -1090,7 +1090,7 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
    ORDER BY group_number, file_number;
    ```
 
-3. **Si hay instancia ASM disponible:** Usar `asmcmd` para navegar la estructura ASM:
+3. (Opcional) **Si hay instancia ASM disponible:** Usar `asmcmd` para navegar la estructura ASM:
 
    ```cmd
    # Conectarse a asmcmd
@@ -1297,7 +1297,7 @@ El archivo físico ya existe en el sistema de archivos (posiblemente de una ejec
 dir C:\app\oracle\oradata\ORCL\lab_*.dbf
 
 -  Si el archivo existe pero el tablespace NO existe en Oracle, eliminar el archivo
-rm C:\app\oracle\oradata\ORCL\lab_app_data01.dbf
+del C:\app\oracle\oradata\ORCL\lab_app_data01.dbf
 
 -  Si tanto el archivo como el tablespace existen, primero eliminar el tablespace
 -  y luego el archivo (o usar INCLUDING CONTENTS AND DATAFILES)
@@ -1433,7 +1433,7 @@ CREATE TABLESPACE lab_uniform_ts
 
 ---
 
-### Problema 5: Error al Acceder a V$ASM_DISKGROUP — Instancia ASM No Disponible
+### (Opcional) Problema 5: Error al Acceder a V$ASM_DISKGROUP — Instancia ASM No Disponible
 
 **Síntomas:**
 - Al consultar `V$ASM_DISKGROUP` aparece:
@@ -1531,7 +1531,7 @@ dir C:\app\oracle\oradata\ORCL\undotbs2*.dbf 2>/dev/null || echo "Archivo UNDOTB
 dir C:\app\oracle\oradata\ORCL\temp02.dbf 2>/dev/null || echo "Tempfile adicional eliminado correctamente"
 
 -  Verificar espacio liberado
-df -h /u01
+fsutil volume diskfree C:
 ```
 
 > ⚠️ **Advertencia:** El comando `DROP TABLESPACE ... INCLUDING CONTENTS AND DATAFILES` elimina permanentemente tanto los objetos de Oracle como los archivos físicos del disco. Esta operación es **irreversible**. Asegurarse de que no hay datos importantes en los tablespaces de práctica antes de ejecutar la limpieza.
