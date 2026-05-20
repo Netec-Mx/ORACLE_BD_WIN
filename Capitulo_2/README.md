@@ -127,13 +127,57 @@ notepad %ORACLE_HOME%\network\admin\tnsnames.ora
 ```
 Contenido:
 ```ini
-# Alias principal para la base de datos ORCL
-# Conexión estándar mediante TCP/IP
-ORCL = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ORCL) ) )
-# Alias alternativo con nombre descriptivo para aplicaciones
-ORACLE_DB_LAB = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ORCL) ) )
-# Alias con parámetros de timeout para conexiones críticas
-ORCL_TIMEOUT = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521)) (CONNECT_DATA = (SERVICE_NAME = ORCL) ) (CONNECT_TIMEOUT = 30) )
+   # Alias principal para la base de datos ORCL
+   # Conexión estándar mediante TCP/IP
+   ORCL =
+     (DESCRIPTION =
+       (ADDRESS_LIST =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+       )
+       (CONNECT_DATA =
+         (SERVER = DEDICATED)
+         (SERVICE_NAME = ORCL)
+       )
+     )
+
+   # Alias alternativo con nombre descriptivo para aplicaciones
+   ORACLE_DB_LAB =
+     (DESCRIPTION =
+       (ADDRESS_LIST =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))
+       )
+       (CONNECT_DATA =
+         (SERVER = DEDICATED)
+         (SERVICE_NAME = ORCL)
+       )
+     )
+
+   # Alias para conexión con servidor compartido (Shared Server)
+   # Nota: Requiere que Shared Server esté configurado en la instancia
+   ORCL_SHARED =
+     (DESCRIPTION =
+       (ADDRESS_LIST =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+       )
+       (CONNECT_DATA =
+         (SERVER = SHARED)
+         (SERVICE_NAME = ORCL)
+       )
+     )
+
+   # Alias con parámetros de timeout para conexiones críticas
+   ORCL_TIMEOUT =
+     (DESCRIPTION =
+       (ADDRESS_LIST =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
+       )
+       (CONNECT_DATA =
+         (SERVER = DEDICATED)
+         (SERVICE_NAME = ORCL)
+       )
+       (CONNECT_TIMEOUT = 30)
+       (RETRY_COUNT = 3)
+     )
 ```
 
 🔹 Probar conectividad
