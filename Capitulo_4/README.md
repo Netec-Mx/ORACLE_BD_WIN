@@ -716,16 +716,16 @@ Las siguientes dos columnas son los "semáforos en rojo" que debes vigilar. Si m
 
    ```sql
    -- Verificar que UNDOTBS2 está siendo usado
-   SELECT
-       t.tablespace_name,
-       t.status,
-       t.contents,
-       ROUND(SUM(d.bytes) / 1024 / 1024, 2) AS size_mb
-   FROM dba_tablespaces t
-   JOIN dba_data_files d USING (tablespace_name)
-   WHERE t.contents = 'UNDO'
-   GROUP BY t.tablespace_name, t.status, t.contents
-   ORDER BY t.tablespace_name;
+SELECT
+    tablespace_name,
+    t.status,
+    t.contents,
+    ROUND(SUM(d.bytes) / 1024 / 1024, 2) AS size_mb
+FROM dba_tablespaces t
+JOIN dba_data_files d USING (tablespace_name)
+WHERE t.contents = 'UNDO'
+GROUP BY tablespace_name, t.status, t.contents
+ORDER BY tablespace_name;
    ```
 
 6. Configurar el parámetro `UNDO_RETENTION` para garantizar consistencia en consultas largas:
