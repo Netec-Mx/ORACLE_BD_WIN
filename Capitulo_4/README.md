@@ -1031,7 +1031,7 @@ UNDOTBS2           ONLINE  UNDO       LOCAL        SYSTEM
 
 ---
 
-### Paso 8: Exploración de ASM (Automatic Storage Management)
+### (Opcional) Paso 8: Exploración de ASM (Automatic Storage Management)
 
 **Objetivo:** Explorar los conceptos de ASM consultando las vistas dinámicas de rendimiento si hay una instancia ASM disponible, o simulando la exploración mediante la documentación de las vistas. Esta sección es parcialmente conceptual si no hay instancia ASM configurada.
 
