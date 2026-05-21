@@ -679,6 +679,7 @@ LAB_EMPLEADOS           2        5      272   1024.00     128
    FROM v$undostat
    WHERE rownum <= 10
    ORDER BY begin_time DESC;
+   ```
 
 Nota:  Indicadores de Error (Los que alertan al DBA)
 Las siguientes dos columnas son los "semáforos en rojo" que debes vigilar. Si muestran un número mayor a cero, hay problemas en la instancia:
@@ -686,7 +687,7 @@ Las siguientes dos columnas son los "semáforos en rojo" que debes vigilar. Si m
 -- ssolderrcnt (Snapshot Too Old Error Count): Cuenta cuántas veces fallaron las consultas de los usuarios con el temido error ORA-01555: snapshot too old durante ese intervalo. Esto ocurre cuando un SELECT largo necesita leer bloques de UNDO antiguos para mantener la consistencia de lectura, pero esos bloques ya fueron sobrescritos por transacciones nuevas porque el Tablespace de UNDO se quedó sin espacio o el tiempo de retención es muy bajo.
 
 -- nospaceerrcnt (No Space Error Count): Indica cuántas veces los procesos transaccionales fallaron con un error de falta de espacio en el Tablespace de UNDO (como el ORA-30036). Si este valor es mayor a cero, significa que el espacio físico asignado a tu UNDO se llenó al 100% y no pudo autoextenderse, interrumpiendo las operaciones de los usuarios.
-   ```
+
 
 3. Crear un segundo tablespace de undo (útil para mantenimiento o cuando el primero se llena):
 
