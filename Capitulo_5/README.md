@@ -904,11 +904,10 @@ type C:\app\oracle\sqlldr\empleados_errores_sqlldr.log|findstr "Rows successfull
    
    ```
 
-2. Verificar que el archivo tiene los permisos correctos para que Oracle pueda leerlo:
+2. Verificar que el archivo exista para que Oracle pueda leerlo:
 
    ```cmd
-   chmod 644 C:\app\oracle\external\productos_ext.csv
-   dir C:\app\oracle\external\
+   dir C:\app\oracle\external\productos_ext.csv
    ```
 
 3. Crear la Tabla Externa en Oracle que apunta al archivo CSV:
