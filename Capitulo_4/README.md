@@ -833,12 +833,13 @@ undo_retention           integer     1800
 
    ```sql
    -- Estado del espacio temporal por tempfile
-   SELECT
-       file#,
-       status,
-       ROUND(bytes / 1024 / 1024, 2)   AS total_mb,
-       ROUND(free_space / 1024 / 1024, 2) AS free_mb
-   FROM v$temp_space_header;
+SELECT
+    tablespace_name,
+    file_id,
+    ROUND((bytes_used + bytes_free) / 1024 / 1024, 2) AS total_mb,
+    ROUND(bytes_used / 1024 / 1024, 2)                AS used_mb,
+    ROUND(bytes_free / 1024 / 1024, 2)                AS free_mb
+FROM v$temp_space_header;
    ```
 
 3. Agregar un segundo tempfile al tablespace `TEMP`:
