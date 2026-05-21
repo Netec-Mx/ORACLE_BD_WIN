@@ -437,11 +437,11 @@ hr_noindex.dmp         ~  180 KB  (sin índices)
 2. Ejecutar la importación con remapeo de esquema:
 
    ```cmd
-   impdp system/oracle_4U@localhost:1521/ORCL \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_full_export.dmp \
-     LOGFILE=hr_import_remap.log \
-     REMAP_SCHEMA=HR:PRACTICA_USER \
+   impdp system/oracle_4U@localhost:1521/ORCL ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_full_export.dmp ^
+     LOGFILE=hr_import_remap.log ^
+     REMAP_SCHEMA=HR:PRACTICA_USER ^
      JOB_NAME=import_hr_remap
    ```
 
@@ -484,11 +484,11 @@ hr_noindex.dmp         ~  180 KB  (sin índices)
    ```
 
    ```cmd
-   impdp system/oracle_4U@localhost:1521/ORCL \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_metadata_only.dmp \
-     LOGFILE=hr_import_meta.log \
-     REMAP_SCHEMA=HR:TEMP_SCHEMA \
+   impdp system/oracle_4U@localhost:1521/ORCL ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_metadata_only.dmp ^
+     LOGFILE=hr_import_meta.log  ^
+     REMAP_SCHEMA=HR:TEMP_SCHEMA ^
      JOB_NAME=import_hr_meta_only
    ```
 
@@ -1411,12 +1411,12 @@ DROP TABLE departments CASCADE CONSTRAINTS PURGE;
 ```
 
 ```cmd
-impdp system/oracle_4U@localhost:1521/ORCL \
-  DIRECTORY=dp_dir \
-  DUMPFILE=hr_full_export.dmp \
-  LOGFILE=hr_import_replace.log \
-  REMAP_SCHEMA=HR:PRACTICA_USER \
-  TABLE_EXISTS_ACTION=REPLACE \
+impdp system/oracle_4U@localhost:1521/ORCL ^
+  DIRECTORY=dp_dir ^
+  DUMPFILE=hr_full_export.dmp ^
+  LOGFILE=hr_import_replace.log ^
+  REMAP_SCHEMA=HR:PRACTICA_USER ^
+  TABLE_EXISTS_ACTION=REPLACE ^
   JOB_NAME=import_hr_replace
 ```
 
