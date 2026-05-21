@@ -38,13 +38,13 @@ Al completar este laboratorio, serás capaz de:
 ### Conocimiento Requerido
 
 - Conocimiento de DDL y DML básico en Oracle (`CREATE TABLE`, `INSERT`, `SELECT`, `DROP`)
-- Familiaridad con el sistema de archivos Linux y permisos de directorios (`chmod`, `chown`, `ls -la`)
+- Familiaridad con el sistema de archivos Windows
 - Comprensión básica de la arquitectura Oracle (instancia, esquemas, tablespaces, segmentos)
 - Conocimiento del esquema de ejemplo HR (tablas `EMPLOYEES`, `DEPARTMENTS`, `JOBS`)
 
 ### Acceso Requerido
 
-- Acceso SSH a la máquina virtual Windows 8.x con Oracle Database 19c instalado
+- Acceso RDP o SSH a la máquina virtual Windows 11.x o Server 19+ con Oracle Database 19c instalado
 - Usuario del sistema operativo: `oracle` con acceso al entorno de Oracle (`ORACLE_HOME`, `ORACLE_SID`)
 - Acceso a SQL*Plus como `SYSTEM` o `SYS AS SYSDBA` con contraseña conocida
 - Privilegios `DATAPUMP_EXP_FULL_DATABASE` y `DATAPUMP_IMP_FULL_DATABASE` para el usuario administrador
@@ -71,8 +71,8 @@ Al completar este laboratorio, serás capaz de:
 | SQL*Plus | Incluido con Oracle 19c | Administración y ejecución de scripts |
 | Oracle Data Pump (`expdp`/`impdp`) | Incluido con Oracle 19c | Exportación e importación de datos |
 | SQL*Loader (`sqlldr`) | Incluido con Oracle 19c | Carga masiva desde archivos planos |
-| Windows | 8.x (8.7 o 8.8) | Sistema operativo del entorno de práctica |
-| CMD / PowerShell | PuTTY 0.79+ / Terminal nativo | Acceso remoto a la VM Linux |
+| Windows | 11.x o Server 19+ | Sistema operativo del entorno de práctica |
+| CMD / PowerShell | PuTTY 0.79+ / Terminal nativo | Acceso remoto a la VM Windows |
 
 ### Configuración Inicial
 
@@ -80,8 +80,6 @@ Antes de iniciar el laboratorio, verificar que el entorno Oracle esté correctam
 
 ```cmd
 REM Conectarse a la VM Windows como usuario oracle
-REM Acceso SSH no requerido en Windows
-REM 192.168.1.100
 
 REM Verificar variables de entorno Oracle
 echo $ORACLE_HOME
@@ -89,7 +87,7 @@ echo $ORACLE_SID
 echo $PATH
 
 REM Si las variables no están configuradas, cargarlas manualmente
-source ~/.bash_profile
+ambiente.bat
 
 REM Verificar que la base de datos esté activa
 sqlplus -S / as sysdba <<EOF
