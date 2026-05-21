@@ -322,14 +322,14 @@ SQLLDR_DIR        C:\app\oracle\sqlldr
 
 **Instrucciones:**
 
-1. Desde la terminal Linux (como usuario `oracle`), ejecutar la exportación completa del esquema HR:
+1. Desde la terminal Windows (como usuario `oracle`), ejecutar la exportación completa del esquema HR:
 
    ```cmd
-   expdp system/oracle_4U@localhost:1521/ORCL \
-     SCHEMAS=HR \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_full_export.dmp \
-     LOGFILE=hr_full_export.log \
+   expdp system/oracle_4U@localhost:1521/ORCL ^
+     SCHEMAS=HR ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_full_export.dmp ^
+     LOGFILE=hr_full_export.log ^
      JOB_NAME=export_hr_full
    ```
 
@@ -350,12 +350,12 @@ SQLLDR_DIR        C:\app\oracle\sqlldr
 5. Ahora ejecutar una exportación solo de metadatos (sin datos), útil para copiar la estructura a ambientes de desarrollo:
 
    ```cmd
-   expdp system/oracle_4U@localhost:1521/ORCL \
-     SCHEMAS=HR \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_metadata_only.dmp \
-     LOGFILE=hr_metadata_only.log \
-     CONTENT=METADATA_ONLY \
+   expdp system/oracle_4U@localhost:1521/ORCL ^
+     SCHEMAS=HR ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_metadata_only.dmp ^
+     LOGFILE=hr_metadata_only.log ^
+     CONTENT=METADATA_ONLY ^
      JOB_NAME=export_hr_meta
    ```
 
@@ -369,12 +369,12 @@ SQLLDR_DIR        C:\app\oracle\sqlldr
 7. Ejecutar una exportación excluyendo índices para demostrar el uso del parámetro `EXCLUDE`:
 
    ```cmd
-   expdp system/oracle_4U@localhost:1521/ORCL \
-     SCHEMAS=HR \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_noindex.dmp \
-     LOGFILE=hr_noindex.log \
-     EXCLUDE=INDEX \
+   expdp system/oracle_4U@localhost:1521/ORCL ^
+     SCHEMAS=HR ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_noindex.dmp ^
+     LOGFILE=hr_noindex.log ^
+     EXCLUDE=INDEX ^
      JOB_NAME=export_hr_noindex
    ```
 
@@ -540,14 +540,14 @@ Ambos esquemas deben mostrar el mismo número de empleados (5 filas).
 
    ```cmd
    # Exportar con múltiples archivos para simular una operación más larga
-   expdp system/oracle_4U@localhost:1521/ORCL \
-     SCHEMAS=HR \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_monitor_%U.dmp \
-     LOGFILE=hr_monitor.log \
-     PARALLEL=2 \
-     FILESIZE=5M \
-     JOB_NAME=export_hr_monitor &
+   expdp system/oracle_4U@localhost:1521/ORCL ^
+     SCHEMAS=HR ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_monitor_%U.dmp ^
+     LOGFILE=hr_monitor.log ^
+     PARALLEL=2 ^
+     FILESIZE=5M ^
+     JOB_NAME=export_hr_monitor
    ```
 
 2. Mientras el trabajo está ejecutando (o inmediatamente después), consultar las vistas de monitoreo:
@@ -589,11 +589,11 @@ Ambos esquemas deben mostrar el mismo número de empleados (5 filas).
 
    ```cmd
    # Si el trabajo anterior ya terminó, lanzar uno nuevo
-   expdp system/oracle_4U@localhost:1521/ORCL \
-     SCHEMAS=HR \
-     DIRECTORY=dp_dir \
-     DUMPFILE=hr_interactive.dmp \
-     LOGFILE=hr_interactive.log \
+   expdp system/oracle_4U@localhost:1521/ORCL ^
+     SCHEMAS=HR ^
+     DIRECTORY=dp_dir ^
+     DUMPFILE=hr_interactive.dmp ^
+     LOGFILE=hr_interactive.log ^
      JOB_NAME=export_interactive
 
    # Durante la ejecución, presionar Ctrl+C para entrar al modo interactivo
@@ -657,7 +657,8 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
 2. Crear el archivo CSV de datos de prueba:
 
    ```cmd
-   type > C:\app\oracle\sqlldr\empleados_datos.csv << ''
+   notepad C:\app\oracle\sqlldr\empleados_datos.csv
+
    201,Juan,García,jgarcia@empresa.com,15-01-2020,35000.50,Tecnología,S
    202,María,López,mlopez@empresa.com,20-03-2019,42000.00,Finanzas,S
    203,Carlos,Martínez,cmartinez@empresa.com,05-07-2021,28500.75,Marketing,S
@@ -776,8 +777,8 @@ type C:\app\oracle\sqlldr\empleados_carga.ctl
 1. Ejecutar SQL*Loader con el archivo de control principal:
 
    ```cmd
-   sqlldr userid=practica_user/Oracle123@localhost:1521/ORCL \
-     control=C:\app\oracle\sqlldr\empleados_carga.ctl \
+   sqlldr userid=practica_user/Oracle123@localhost:1521/ORCL ^
+     control=C:\app\oracle\sqlldr\empleados_carga.ctl ^
      log=C:\app\oracle\sqlldr\empleados_carga_sqlldr.log
    ```
 
@@ -802,8 +803,8 @@ type C:\app\oracle\sqlldr\empleados_carga.ctl
 4. Ahora ejecutar SQL*Loader con el archivo que contiene errores para ver el manejo de bad records:
 
    ```cmd
-   sqlldr userid=practica_user/Oracle123@localhost:1521/ORCL \
-     control=C:\app\oracle\sqlldr\empleados_errores.ctl \
+   sqlldr userid=practica_user/Oracle123@localhost:1521/ORCL ^
+     control=C:\app\oracle\sqlldr\empleados_errores.ctl ^
      log=C:\app\oracle\sqlldr\empleados_errores_sqlldr.log
    ```
 
@@ -1335,9 +1336,9 @@ Revisar el log de SQL*Loader para el mensaje de error detallado
 type C:\app\oracle\sqlldr\empleados_carga_sqlldr.log | findstr ERROR
 
 Ejecutar SQL*Loader con el parámetro ERRORS=999 para ver todos los errores
-sqlldr userid=practica_user/Oracle123@localhost:1521/ORCL \
-  control=C:\app\oracle\sqlldr\empleados_carga.ctl \
-  log=C:\app\oracle\sqlldr\debug_load.log \
+sqlldr userid=practica_user/Oracle123@localhost:1521/ORCL ^
+  control=C:\app\oracle\sqlldr\empleados_carga.ctl ^
+  log=C:\app\oracle\sqlldr\debug_load.log ^
   errors=999
 ```
 
