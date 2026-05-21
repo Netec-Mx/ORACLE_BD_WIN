@@ -759,18 +759,18 @@ ORDER BY tablespace_name;
 
    ```sql
    -- Estado de los segmentos de rollback/undo
-   SELECT
-       usn,
-       name,
-       status,
-       ROUND(rssize / 1024 / 1024, 2) AS size_mb,
-       writes,
-       xacts,
-       shrinks,
-       extends
-   FROM v$rollstat r
-   JOIN v$rollname n ON r.usn = n.usn
-   ORDER BY usn;
+SELECT
+    r.usn,
+    n.name,
+    r.status, 
+    ROUND(r.rssize / 1024 / 1024, 2) AS size_mb,
+    r.writes,
+    r.xacts,
+    r.shrinks,
+    r.extends
+FROM v$rollstat r
+JOIN v$rollname n ON r.usn = n.usn
+ORDER BY r.usn;
    ```
 
 **Salida Esperada:**
