@@ -417,7 +417,7 @@ LAB_UNIFORM_TS     ONLINE  LOCAL        UNIFORM          AUTO
        SUBSTR(d.file_name, INSTR(d.file_name, '/', -1) + 1) AS filename,
        ROUND(d.bytes / 1024 / 1024, 2)                      AS current_mb,
        d.autoextensible                                       AS autoext,
-       ROUND(d.inc- ent_by * 8192 / 1024 / 1024, 2)        AS next_mb,
+       ROUND(d.increment_by * 8192 / 1024 / 1024, 2)        AS next_mb,
        ROUND(d.maxbytes / 1024 / 1024, 2)                   AS max_mb,
        d.status
    FROM dba_data_files d
