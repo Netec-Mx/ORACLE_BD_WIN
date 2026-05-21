@@ -598,8 +598,8 @@ Ambos esquemas deben mostrar el mismo número de empleados (5 filas).
 
    # Durante la ejecución, presionar Ctrl+C para entrar al modo interactivo
    # En el prompt "Export>" ejecutar:
-   # STATUS
-   # CONTINUE_CLIENT
+   STATUS
+   CONTINUE_CLIENT
    ```
 
 **Salida Esperada:**
@@ -703,7 +703,7 @@ Deben aparecer al menos los trabajos `EXPORT_HR_FULL`, `EXPORT_HR_META` e `IMPOR
 
 4. Crear también un archivo CSV con algunos registros intencionalmente incorrectos para demostrar el manejo de errores:
 
-   ```cmd
+```cmd
 cd  C:\app\oracle\sqlldr\
 
 notepad empleados_errores.csv
