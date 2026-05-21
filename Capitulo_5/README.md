@@ -254,7 +254,7 @@ Debe mostrar al menos las tablas `DEPARTMENTS` y `EMPLOYEES` con status `VALID`.
 
    ```sql
    -- Otorgar privilegios al usuario SYSTEM (ya los tiene implícitamente, pero es buena práctica)
-   GRANT READ, WRITE ON DIRECTORY dp_dir TO system;
+  -- GRANT READ, WRITE ON DIRECTORY dp_dir TO system;
 
    -- Otorgar privilegios al usuario HR para que pueda exportar su propio esquema
    GRANT READ, WRITE ON DIRECTORY dp_dir TO hr;
@@ -269,9 +269,9 @@ Debe mostrar al menos las tablas `DEPARTMENTS` y `EMPLOYEES` con status `VALID`.
    CREATE OR REPLACE DIRECTORY sqlldr_dir AS 'C:\app\oracle\sqlldr';
    CREATE OR REPLACE DIRECTORY ext_dir AS 'C:\app\oracle\external';
 
-   GRANT READ, WRITE ON DIRECTORY sqlldr_dir TO system;
+   -- GRANT READ, WRITE ON DIRECTORY sqlldr_dir TO system;
    GRANT READ, WRITE ON DIRECTORY sqlldr_dir TO hr;
-   GRANT READ, WRITE ON DIRECTORY ext_dir TO system;
+   -- GRANT READ, WRITE ON DIRECTORY ext_dir TO system;
    GRANT READ, WRITE ON DIRECTORY ext_dir TO hr;
 
    -- Verificar todos los directorios creados
