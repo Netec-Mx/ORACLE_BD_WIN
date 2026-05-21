@@ -577,7 +577,7 @@ Ambos esquemas deben mostrar el mismo número de empleados (5 filas).
 
    -- Ver procesos de Data Pump activos en la instancia
    SELECT sid, serial#, username, program, status
-   FROM v\$session
+   FROM v$session
    WHERE program LIKE '%DM%' OR program LIKE '%DW%'
    ORDER BY program;
 
