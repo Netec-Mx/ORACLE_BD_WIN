@@ -1,4 +1,4 @@
-REM Práctica 5. Movimiento de Datos en Oracle 19c
+## Práctica 5. Movimiento de Datos en Oracle 19c
 
 
 ## Metadatos
@@ -79,17 +79,17 @@ Al completar este laboratorio, serás capaz de:
 Antes de iniciar el laboratorio, verificar que el entorno Oracle esté correctamente configurado:
 
 ```cmd
-REM Conectarse a la VM Windows como usuario oracle
+Conectarse a la VM Windows como usuario oracle
 
-REM Verificar variables de entorno Oracle
+Verificar variables de entorno Oracle
 echo $ORACLE_HOME
 echo $ORACLE_SID
 echo $PATH
 
-REM Si las variables no están configuradas, cargarlas manualmente
+Si las variables no están configuradas, cargarlas manualmente
 ambiente.bat
 
-REM Verificar que la base de datos esté activa
+Verificar que la base de datos esté activa
 sqlplus -S / as sysdba <<EOF
 SELECT instance_name, status FROM v\$instance;
 EXIT;
@@ -97,17 +97,17 @@ EOF
 ```
 
 ```cmd
-REM Crear los directorios del sistema operativo que usaremos en este laboratorio
+Crear los directorios del sistema operativo que usaremos en este laboratorio
 mkdir /u01/oracle/datapump
 mkdir /u01/oracle/sqlldr
 mkdir /u01/oracle/external
 
-REM Asignar permisos correctos al usuario oracle
+Asignar permisos correctos al usuario oracle
 chmod 755 /u01/oracle/datapump
 chmod 755 /u01/oracle/sqlldr
 chmod 755 /u01/oracle/external
 
-REM Verificar que los directorios existen y tienen los permisos correctos
+Verificar que los directorios existen y tienen los permisos correctos
 ls -la /u01/oracle/
 ```
 
@@ -413,14 +413,14 @@ Job "SYSTEM"."EXPORT_HR_FULL" successfully completed at [hora]
 **Verificación:**
 
 ```cmd
-REM Verificar que los tres archivos dump existen
+Verificar que los tres archivos dump existen
 ls -lh /u01/oracle/datapump/*.dmp
 
-REM El archivo con datos debe ser mayor que el de solo metadatos
-REM Ejemplo esperado:
-REM hr_full_export.dmp     ~  200 KB  (con datos)
-REM hr_metadata_only.dmp   ~   80 KB  (sin datos)
-REM hr_noindex.dmp         ~  180 KB  (sin índices)
+El archivo con datos debe ser mayor que el de solo metadatos
+Ejemplo esperado:
+hr_full_export.dmp     ~  200 KB  (con datos)
+hr_metadata_only.dmp   ~   80 KB  (sin datos)
+hr_noindex.dmp         ~  180 KB  (sin índices)
 ```
 
 ---
@@ -751,23 +751,23 @@ Table created.
 ```
 
 ```cmd
-REM Verificar los archivos creados
+Verificar los archivos creados
 ls -la /u01/oracle/sqlldr/
-REM Debe mostrar:
-REM empleados_datos.csv
-REM empleados_carga.ctl
-REM empleados_errores.csv
-REM empleados_errores.ctl
+Debe mostrar:
+empleados_datos.csv
+empleados_carga.ctl
+empleados_errores.csv
+empleados_errores.ctl
 ```
 
 **Verificación:**
 
 ```cmd
-REM Verificar contenido del archivo CSV
+Verificar contenido del archivo CSV
 wc -l /u01/oracle/sqlldr/empleados_datos.csv
-REM Debe mostrar: 10 /u01/oracle/sqlldr/empleados_datos.csv
+Debe mostrar: 10 /u01/oracle/sqlldr/empleados_datos.csv
 
-REM Verificar contenido del archivo de control
+Verificar contenido del archivo de control
 cat /u01/oracle/sqlldr/empleados_carga.ctl
 ```
 
@@ -875,11 +875,11 @@ EMP_ID NOMBRE    APELLIDO   SALARIO    DEPARTAMENTO
 **Verificación:**
 
 ```cmd
-REM El log file debe indicar:
+El log file debe indicar:
 grep "Rows successfully loaded" /u01/oracle/sqlldr/empleados_carga_sqlldr.log
-REM Debe mostrar: 10 Rows successfully loaded.
+Debe mostrar: 10 Rows successfully loaded.
 
-REM Para el archivo con errores:
+Para el archivo con errores:
 grep "Rows successfully loaded\|Rows not loaded" /u01/oracle/sqlldr/empleados_errores_sqlldr.log
 ```
 
@@ -1257,22 +1257,22 @@ El directorio físico del sistema operativo no existe, no tiene los permisos cor
 **Solución:**
 
 ```cmd
-REM Verificar que el directorio existe
+Verificar que el directorio existe
 ls -la /u01/oracle/datapump
 
-REM Si no existe, crearlo
+Si no existe, crearlo
 mkdir /u01/oracle/datapump
 
-REM Asignar permisos correctos (propietario oracle, grupo dba)
+Asignar permisos correctos (propietario oracle, grupo dba)
 chown oracle:dba /u01/oracle/datapump
 chmod 755 /u01/oracle/datapump
 
-REM Verificar que el objeto DIRECTORY Oracle apunta a la ruta correcta
+Verificar que el objeto DIRECTORY Oracle apunta a la ruta correcta
 sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 SELECT directory_name, directory_path FROM dba_directories WHERE directory_name = 'DP_DIR';
 EOF
 
-REM Si la ruta es incorrecta, recrear el directorio
+Si la ruta es incorrecta, recrear el directorio
 sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 CREATE OR REPLACE DIRECTORY dp_dir AS '/u01/oracle/datapump';
 EOF
@@ -1331,23 +1331,23 @@ El archivo de datos no existe en la ruta especificada en el archivo de control, 
 **Solución:**
 
 ```cmd
-REM Verificar que el archivo de datos existe y tiene contenido
+Verificar que el archivo de datos existe y tiene contenido
 ls -la /u01/oracle/sqlldr/empleados_datos.csv
 wc -l /u01/oracle/sqlldr/empleados_datos.csv
 
-REM Verificar que el archivo tiene permisos de lectura
+Verificar que el archivo tiene permisos de lectura
 chmod 644 /u01/oracle/sqlldr/empleados_datos.csv
 
-REM Revisar el archivo de control para detectar errores de sintaxis
+Revisar el archivo de control para detectar errores de sintaxis
 cat /u01/oracle/sqlldr/empleados_carga.ctl
 
-REM Si hay registros en el archivo BAD, revisar el motivo del rechazo
+Si hay registros en el archivo BAD, revisar el motivo del rechazo
 cat /u01/oracle/sqlldr/empleados_carga.bad
 
-REM Revisar el log de SQL*Loader para el mensaje de error detallado
+Revisar el log de SQL*Loader para el mensaje de error detallado
 cat /u01/oracle/sqlldr/empleados_carga_sqlldr.log | grep -A5 "error\|Error\|ERROR"
 
-REM Ejecutar SQL*Loader con el parámetro ERRORS=999 para ver todos los errores
+Ejecutar SQL*Loader con el parámetro ERRORS=999 para ver todos los errores
 sqlldr userid=practica_user/Oracle123@localhost:1521/ORCLPDB1 \
   control=/u01/oracle/sqlldr/empleados_carga.ctl \
   log=/u01/oracle/sqlldr/debug_load.log \
@@ -1372,26 +1372,26 @@ El archivo CSV referenciado en la tabla externa no existe en el directorio físi
 **Solución:**
 
 ```cmd
-REM Verificar que el archivo existe en el directorio correcto
+Verificar que el archivo existe en el directorio correcto
 ls -la /u01/oracle/external/
 
-REM Si el archivo no existe, crearlo nuevamente
+Si el archivo no existe, crearlo nuevamente
 cat > /u01/oracle/external/productos_ext.csv << 'EOF'
 1001,Laptop Pro 15,Electrónica,85000.00,150,2024-01-15
 1002,Mouse Inalámbrico,Periféricos,450.50,500,2024-01-20
 EOF
 
-REM Verificar permisos del archivo (debe ser legible por el usuario oracle)
+Verificar permisos del archivo (debe ser legible por el usuario oracle)
 chmod 644 /u01/oracle/external/productos_ext.csv
 
-REM Verificar que el objeto DIRECTORY apunta al directorio correcto
+Verificar que el objeto DIRECTORY apunta al directorio correcto
 sqlplus system/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 SELECT directory_name, directory_path
 FROM dba_directories
 WHERE directory_name = 'EXT_DIR';
 EOF
 
-REM Verificar el nombre exacto del archivo en la tabla externa
+Verificar el nombre exacto del archivo en la tabla externa
 sqlplus practica_user/Oracle123@localhost:1521/ORCLPDB1 <<EOF
 SELECT table_name, location FROM user_external_locations;
 EOF
@@ -1463,24 +1463,24 @@ EXIT;
 ```
 
 ```cmd
-REM Limpiar archivos temporales del sistema operativo
-REM PRECAUCIÓN: Conservar los dump files si se necesitan para prácticas posteriores
+Limpiar archivos temporales del sistema operativo
+PRECAUCIÓN: Conservar los dump files si se necesitan para prácticas posteriores
 
-REM Limpiar solo los archivos de log de SQL*Loader y archivos BAD
+Limpiar solo los archivos de log de SQL*Loader y archivos BAD
 rm -f /u01/oracle/sqlldr/*.log
 rm -f /u01/oracle/sqlldr/*.bad
 rm -f /u01/oracle/sqlldr/*.dsc
 
-REM Limpiar los archivos de datos CSV de SQL*Loader (se pueden regenerar)
+Limpiar los archivos de datos CSV de SQL*Loader (se pueden regenerar)
 rm -f /u01/oracle/sqlldr/*.csv
 rm -f /u01/oracle/sqlldr/*.ctl
 
-REM Conservar los dump files de Data Pump para referencia
-REM Si se desea liberar espacio, ejecutar:
-REM rm -f /u01/oracle/datapump/*.dmp
-REM rm -f /u01/oracle/datapump/*.log
+Conservar los dump files de Data Pump para referencia
+Si se desea liberar espacio, ejecutar:
+rm -f /u01/oracle/datapump/*.dmp
+rm -f /u01/oracle/datapump/*.log
 
-REM Verificar el espacio liberado
+Verificar el espacio liberado
 df -h /u01/
 ```
 
