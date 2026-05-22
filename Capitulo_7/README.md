@@ -100,10 +100,8 @@ EXIT;
 mkdir  C:\app\oracle\lob_files
 
 # Crear archivos de prueba para el laboratorio
-notepad C:\app\oracle\lob_files\contrato_001.txt
-```
+notepad C:\app\oracle\lob_files\contrato_001.txt 
 
-```bash
 CONTRATO DE SERVICIOS PROFESIONALES
 =====================================
 Entre las partes: Empresa ABC S.A. de C.V. (en adelante "El Cliente")
@@ -128,13 +126,9 @@ sobre toda informacion tecnica y comercial intercambiada durante
 la vigencia de este contrato y por un periodo de dos anios posterior.
 
 Firmado en la Ciudad de Mexico a los 15 dias del mes de enero de 2024.
-```
 
-```bash
-notepad C:\app\oracle\lob_files\manual_tecnico.txt
-```
+notepad C:\app\oracle\lob_files\manual_tecnico.txt 
 
-```bash
 MANUAL TECNICO - SISTEMA DE GESTION DOCUMENTAL v2.0
 =====================================================
 Capitulo 1: Introduccion al Sistema
@@ -157,12 +151,12 @@ Capitulo 3: Tipos de Documentos Soportados
 Capitulo 4: Procedimientos de Respaldo
 Los LOBs internos se respaldan automaticamente con RMAN.
 Los archivos BFILE requieren respaldo independiente del SO.
-```
 
-```bash
+# Checar que los archivos fueron creados
 echo "Archivos de prueba creados exitosamente."
 dir C:\app\oracle\lob_files\
 ```
+
 
 ---
 
@@ -220,7 +214,7 @@ dir C:\app\oracle\lob_files\
    -- Verificar creación del tablespace
    SELECT
        tablespace_name,
-       status,
+       t.status,
        extent_management,
        segment_space_management,
        ROUND(bytes / 1024 / 1024, 2) AS size_mb
