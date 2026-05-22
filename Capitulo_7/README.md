@@ -330,30 +330,29 @@ DIR_LOB_FILES      C:\app\oracle\lob_files
 
    ```sql
    -- Tabla de multimedia con BLOB - SecureFiles con compresión y deduplicación
-   CREATE TABLE lab07_multimedia (
-       id_archivo       NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-       nombre_archivo   VARCHAR2(255)  NOT NULL,
-       tipo_contenido   VARCHAR2(100),
-       descripcion      VARCHAR2(500),
-       fecha_carga      TIMESTAMP      DEFAULT SYSTIMESTAMP,
-       tamano_bytes     NUMBER,
-       contenido_blob   BLOB,
-       miniatura_blob   BLOB
-   )
-   LOB (contenido_blob) STORE AS SECUREFILE sf_multimedia_contenido (
-       TABLESPACE    lob_data_ts
-       COMPRESS      MEDIUM
-       DEDUPLICATE   LOB
-       CACHE
-       NOLOGGING
-   )
-   LOB (miniatura_blob) STORE AS SECUREFILE sf_multimedia_miniatura (
-       TABLESPACE    lob_data_ts
-       NOCOMPRESS
-       NODEDUPLICATE
-       NOCACHE
-       LOGGING
-   );
+CREATE TABLE lab07_multimedia (
+    id_archivo       NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre_archivo   VARCHAR2(255)  NOT NULL,
+    tipo_contenido   VARCHAR2(100),
+    descripcion      VARCHAR2(500),
+    fecha_carga      TIMESTAMP      DEFAULT SYSTIMESTAMP,
+    tamano_bytes     NUMBER,
+    contenido_blob   BLOB,
+    miniatura_blob   BLOB
+)
+LOB (contenido_blob) STORE AS SECUREFILE sf_multimedia_contenido (
+    TABLESPACE    lob_data_ts
+    COMPRESS      MEDIUM
+    DEDUPLICATE
+    CACHE
+    NOLOGGING
+)
+LOB (miniatura_blob) STORE AS SECUREFILE sf_multimedia_miniatura (
+    TABLESPACE    lob_data_ts
+    NOCOMPRESS
+    KEEP_DUPLICATES
+    NOCACHE
+);
 
    -- Verificar estructura
    DESC lab07_multimedia;
