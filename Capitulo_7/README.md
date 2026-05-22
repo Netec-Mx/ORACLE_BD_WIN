@@ -95,6 +95,7 @@ SELECT instance_name, status FROM v$instance;
 EXIT;
 ```
 
+```bash
   Crear directorio de archivos LOB
 mkdir C:\oracle\lob_files
   Crear archivos de prueba
@@ -106,23 +107,33 @@ echo Consultora XYZ >> C:\oracle\lob_files\contrato_001.txt
 echo MANUAL TECNICO > C:\oracle\lob_files\manual_tecnico.txt
 echo Oracle Database 19c >> C:\oracle\lob_files\manual_tecnico.txt
 dir C:\oracle\lob_files
+```
+
+```bash
 ________________________________________
 Paso 1: Crear Tablespace y DIRECTORY
 sqlplus / as sysdba
+
 CREATE TABLESPACE lob_data_ts
 DATAFILE 'C:\app\oracle\oradata\ORCL\lob_data01.dbf'
 SIZE 200M
 AUTOEXTEND ON NEXT 50M MAXSIZE 2G
 EXTENT MANAGEMENT LOCAL
 SEGMENT SPACE MANAGEMENT AUTO;
+
 CREATE OR REPLACE DIRECTORY dir_lob_files AS 'C:\oracle\lob_files';
 
 GRANT READ, WRITE ON DIRECTORY dir_lob_files TO practica_user;
 ALTER USER practica_user QUOTA UNLIMITED ON lob_data_ts;
 GRANT CREATE ANY DIRECTORY TO practica_user;
 ________________________________________
+```
+
+```bash
 Paso 2: Crear Tablas con LOB
+
 CONNECT practica_user/Oracle123@ORCL
+
 CREATE TABLE lab07_contratos (
     id_contrato NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     numero_contrato VARCHAR2(20),
@@ -151,8 +162,13 @@ CREATE TABLE lab07_manuales_ext (
     codigo_manual VARCHAR2(20),
     archivo_externo BFILE
 );
+```
+
 ________________________________________
+
+```bash
 Paso 3: Insertar CLOB
+
 INSERT INTO lab07_contratos (
     numero_contrato,
     cliente,
@@ -166,7 +182,10 @@ INSERT INTO lab07_contratos (
 );
 
 COMMIT;
+```
+
 ________________________________________
+```bash
 DECLARE
     v_clob CLOB;
 BEGIN
@@ -187,18 +206,25 @@ BEGIN
     COMMIT;
 END;
 /
+```
 ________________________________________
+```bash
 Paso 4: Lectura y Búsqueda CLOB
 SELECT
     numero_contrato,
     DBMS_LOB.SUBSTR(texto_contrato, 100, 1)
 FROM lab07_contratos;
+```
 ________________________________________
+```bash
 SELECT
     numero_contrato,
     DBMS_LOB.INSTR(texto_contrato, 'Contrato', 1, 1)
 FROM lab07_contratos;
+```
 ________________________________________
+
+```bash
 SET SERVEROUTPUT ON;
 
 DECLARE
@@ -217,7 +243,9 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(v_buffer);
 END;
 /
+```
 ________________________________________
+```bash
 SET SERVEROUTPUT ON;
 
 DECLARE
@@ -249,11 +277,17 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Adenda anexada exitosamente.');
 END;
 /
+```
 ________________________________________
+
+```bash
 Paso 5: BLOB desde archivos
 echo PNG_SIMULADO > C:\oracle\lob_files\imagen_producto_001.png
 echo PDF_SIMULADO > C:\oracle\lob_files\manual_tecnico_v2.pdf
+```
 ________________________________________
+
+```bash
 SET SERVEROUTPUT ON;
 
 DECLARE
@@ -309,7 +343,11 @@ EXCEPTION
         RAISE;
 END;
 /
+```
+
 ________________________________________
+
+```bash
 INSERT INTO lab07_manuales_ext (
     codigo_manual,
     archivo_externo
@@ -319,12 +357,19 @@ INSERT INTO lab07_manuales_ext (
 );
 
 COMMIT;
+```
 ________________________________________
+
+```bash
 SELECT
     codigo_manual,
     DBMS_LOB.FILEEXISTS(archivo_externo) AS existe
 FROM lab07_manuales_ext;
+```
+
 ________________________________________
+
+```bash
 SET SERVEROUTPUT ON;
 
 DECLARE
@@ -359,19 +404,29 @@ EXCEPTION
         RAISE;
 END;
 /
+```
+
 ________________________________________
+
+```
 Paso 6: Validación final
 SELECT COUNT(*) FROM lab07_contratos;
 SELECT COUNT(*) FROM lab07_multimedia;
 SELECT COUNT(*) FROM lab07_manuales_ext;
+```
+
 ________________________________________
+
+```bash
 SELECT
     table_name,
     column_name,
     securefile
 FROM user_lobs;
- 
+```
+
 ________________________________________
+
 Resultado esperado
 •	Inserciones exitosas con IDs generados 
 •	Búsquedas retornan coincidencias reales 
