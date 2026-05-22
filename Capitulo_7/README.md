@@ -1,4 +1,4 @@
-## Práctica 7. Tipos de datos LOB y su Manejo en Oracle
+# Práctica 7. Tipos de datos LOB y su Manejo en Oracle
 
 ## Metadatos
 
@@ -84,10 +84,10 @@ lsnrctl status
 set | findstr ORA
  
 # O en su caso establece las variables de entorno Oracle
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=C:\app\oracle\product/19.3.0/dbhome_1
+export ORACLE_BASE=C:\app\oracle
+export ORACLE_HOME=C:\app\oracle\product\19.3.0\dbhome_1
 export ORACLE_SID=ORCL
-export PATH=$ORACLE_HOME/bin:$PATH
+export PATH=$ORACLE_HOME\bin:$PATH
 
 # Verificar conectividad a la base de datos
 sqlplus  / as sysdba
