@@ -1,4 +1,4 @@
-# Práctica 7. Tipos de datos LOB y su Manejo en Oracle
+## Práctica 7. Tipos de datos LOB y su Manejo en Oracle
 
 ## Metadatos
 
