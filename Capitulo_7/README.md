@@ -156,7 +156,6 @@ Los archivos BFILE requieren respaldo independiente del SO.
 echo "Archivos de prueba creados exitosamente."
 dir C:\app\oracle\lob_files\
 
-
 ---
 
 ## Instrucciones Paso a Paso
