@@ -151,10 +151,11 @@ Capitulo 3: Tipos de Documentos Soportados
 Capitulo 4: Procedimientos de Respaldo
 Los LOBs internos se respaldan automaticamente con RMAN.
 Los archivos BFILE requieren respaldo independiente del SO.
+```
 
 echo "Archivos de prueba creados exitosamente."
 dir C:\app\oracle\lob_files\
-```
+
 
 ---
 
